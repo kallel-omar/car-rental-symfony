@@ -1,10 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+{% extends 'base.html.twig' %}
 
-</body>
-</html>
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+<h1>Admin Dashboard</h1>
+
+<div style="display:flex; gap:20px; margin-bottom:20px;">
+    <div>
+        <h3>Total Cars</h3>
+        <p>{{ carsCount }}</p>
+    </div>
+
+    <div>
+        <h3>Total Reservations</h3>
+        <p>{{ reservationsCount }}</p>
+    </div>
+
+    <div>
+        <h3>Total Revenue</h3>
+        <p>{{ totalRevenue }} TND</p>
+    </div>
+</div>
+
+<h2>Latest Reservations</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Car</th>
+            <th>Total Price</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for r in reservations %}
+            <tr>
+                <td>{{ r.id }}</td>
+                <td>{{ r.car.model }}</td>
+                <td>{{ r.totalPrice }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">No data</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
