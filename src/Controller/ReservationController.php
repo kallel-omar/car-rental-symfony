@@ -4,15 +4,28 @@ namespace App\Controller;
 
 use App\Entity\Reservation;
 use App\Form\ReservationType;
+
 use App\Repository\ReservationRepository;
+use App\Repository\CarRepository;
+
 use Doctrine\ORM\EntityManagerInterface;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
 use Symfony\Component\Routing\Attribute\Route;
+
 use Symfony\Component\String\Slugger\SluggerInterface;
+
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -38,6 +51,7 @@ final class ReservationController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         ReservationRepository $reservationRepository,
+        CarRepository $carRepository,
         SluggerInterface $slugger
     ): Response {
 
@@ -55,6 +69,19 @@ final class ReservationController extends AbstractController
         }
 
         $reservation = new Reservation();
+
+        // AUTO SELECT CAR
+        $carId = $request->query->get('car');
+
+        if ($carId) {
+
+            $car = $carRepository->find($carId);
+
+            if ($car) {
+
+                $reservation->setCar($car);
+            }
+        }
 
         $form = $this->createForm(
             ReservationType::class,
@@ -243,61 +270,6 @@ final class ReservationController extends AbstractController
         );
     }
 
-    #[Route('/calendar', name: 'app_reservation_calendar', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function calendar(
-        ReservationRepository $reservationRepository
-    ): Response {
-
-        $reservations = $reservationRepository->findBy([
-            'status' => ['pending', 'approved']
-        ]);
-
-        $events = [];
-
-        foreach ($reservations as $reservation) {
-
-            $events[] = [
-
-                'title' =>
-                    $reservation->getCar()->getBrand()
-                    .' '
-                    .$reservation->getCar()->getModel(),
-
-                'start' =>
-                    $reservation->getStartDate()->format('Y-m-d'),
-
-                'end' =>
-                    (clone $reservation->getEndDate())
-                        ->modify('+1 day')
-                        ->format('Y-m-d'),
-
-                'backgroundColor' => match ($reservation->getStatus()) {
-
-                    'approved' => '#198754',
-                    'pending' => '#ffc107',
-
-                    default => '#6c757d',
-                },
-
-                'borderColor' => match ($reservation->getStatus()) {
-
-                    'approved' => '#198754',
-                    'pending' => '#ffc107',
-
-                    default => '#6c757d',
-                },
-            ];
-        }
-
-        return $this->render(
-            'reservation/calendar.html.twig',
-            [
-                'events' => json_encode($events),
-            ]
-        );
-    }
-
     #[Route('/my-reservations', name: 'app_my_reservations', methods: ['GET'])]
     public function myReservations(
         ReservationRepository $reservationRepository
@@ -317,7 +289,6 @@ final class ReservationController extends AbstractController
             ]
         );
     }
-
     #[Route('/{id}', name: 'app_reservation_show', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function show(
@@ -332,79 +303,12 @@ final class ReservationController extends AbstractController
         );
     }
 
-    #[Route('/{id}/edit', name: 'app_reservation_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function edit(
-        Request $request,
-        Reservation $reservation,
-        EntityManagerInterface $entityManager
-    ): Response {
-
-        $form = $this->createForm(
-            ReservationType::class,
-            $reservation
-        );
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $entityManager->flush();
-
-            $this->addFlash(
-                'success',
-                'Reservation updated successfully.'
-            );
-
-            return $this->redirectToRoute(
-                'app_reservation_index'
-            );
-        }
-
-        return $this->render(
-            'reservation/edit.html.twig',
-            [
-                'reservation' => $reservation,
-                'form' => $form,
-            ]
-        );
-    }
-
-    #[Route('/{id}', name: 'app_reservation_delete', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function delete(
-        Request $request,
-        Reservation $reservation,
-        EntityManagerInterface $entityManager
-    ): Response {
-
-        if (
-            $this->isCsrfTokenValid(
-                'delete'.$reservation->getId(),
-                $request->getPayload()->getString('_token')
-            )
-        ) {
-
-            $entityManager->remove($reservation);
-
-            $entityManager->flush();
-
-            $this->addFlash(
-                'success',
-                'Reservation deleted successfully.'
-            );
-        }
-
-        return $this->redirectToRoute(
-            'app_reservation_index'
-        );
-    }
-
     #[Route('/{id}/approve', name: 'app_reservation_approve', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function approve(
         Reservation $reservation,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        MailerInterface $mailer
     ): Response {
 
         $reservation->setStatus('approved');
@@ -413,14 +317,32 @@ final class ReservationController extends AbstractController
 
         $entityManager->flush();
 
+        $email = (new Email())
+            ->from('noreply@carbook.com')
+            ->to($reservation->getUser()->getEmail())
+            ->subject('Reservation Approved')
+            ->html('
+                <h2>Your reservation has been approved ✅</h2>
+
+                <p>
+                    Your reservation for
+                    <strong>'
+                .$reservation->getCar()->getBrand().' '
+                .$reservation->getCar()->getModel().
+                '</strong>
+                    has been approved.
+                </p>
+            ');
+
+        $mailer->send($email);
+
         $this->addFlash(
             'success',
             'Reservation approved successfully.'
         );
 
         return $this->redirectToRoute(
-            'app_reservation_show',
-            ['id' => $reservation->getId()]
+            'app_reservation_index'
         );
     }
 
@@ -428,12 +350,23 @@ final class ReservationController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function reject(
         Reservation $reservation,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        MailerInterface $mailer
     ): Response {
 
         $reservation->setStatus('rejected');
 
         $entityManager->flush();
+
+        $email = (new Email())
+            ->from('noreply@carbook.com')
+            ->to($reservation->getUser()->getEmail())
+            ->subject('Reservation Rejected')
+            ->html('
+                <h2>Your reservation has been rejected ❌</h2>
+            ');
+
+        $mailer->send($email);
 
         $this->addFlash(
             'danger',
@@ -441,8 +374,7 @@ final class ReservationController extends AbstractController
         );
 
         return $this->redirectToRoute(
-            'app_reservation_show',
-            ['id' => $reservation->getId()]
+            'app_reservation_index'
         );
     }
 
@@ -450,7 +382,8 @@ final class ReservationController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function complete(
         Reservation $reservation,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        MailerInterface $mailer
     ): Response {
 
         $reservation->setStatus('completed');
@@ -459,14 +392,23 @@ final class ReservationController extends AbstractController
 
         $entityManager->flush();
 
+        $email = (new Email())
+            ->from('noreply@carbook.com')
+            ->to($reservation->getUser()->getEmail())
+            ->subject('Reservation Completed')
+            ->html('
+                <h2>Your reservation is completed 🚗</h2>
+            ');
+
+        $mailer->send($email);
+
         $this->addFlash(
             'success',
-            'Car returned successfully.'
+            'Reservation completed successfully.'
         );
 
         return $this->redirectToRoute(
-            'app_reservation_show',
-            ['id' => $reservation->getId()]
+            'app_reservation_index'
         );
     }
 
@@ -477,7 +419,6 @@ final class ReservationController extends AbstractController
 
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        // SECURITY CHECK
         if (
             $reservation->getUser() !== $this->getUser()
             && !$this->isGranted('ROLE_ADMIN')
@@ -486,12 +427,11 @@ final class ReservationController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        // STATUS CHECK
         if (!in_array($reservation->getStatus(), ['approved', 'completed'])) {
 
             $this->addFlash(
                 'danger',
-                'Invoice is only available for approved or completed reservations.'
+                'Invoice only available for approved reservations.'
             );
 
             return $this->redirectToRoute('app_my_reservations');

@@ -431,7 +431,7 @@
 
                                 {% if car.status == 'available' %}
 
-                                    <a href="{{ path('app_reservation_new') }}"
+                                    <a href="{{ path('app_reservation_new', {'car': car.id}) }}"
                                        class="btn btn-success custom-btn">
 
                                         Book Now
