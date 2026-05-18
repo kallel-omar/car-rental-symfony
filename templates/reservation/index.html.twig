@@ -234,6 +234,12 @@
                                         Rejected
                                     </span>
 
+                                {% elseif reservation.status == 'completed' %}
+
+                                    <span class="badge rounded-pill bg-primary px-3 py-2">
+                                        Completed
+                                    </span>
+
                                 {% else %}
 
                                     <span class="badge rounded-pill bg-secondary px-3 py-2">

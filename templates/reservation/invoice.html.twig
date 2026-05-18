@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <style>
+
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            color: #111827;
+            padding: 40px;
+            font-size: 14px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 50px;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #198754;
+        }
+
+        .invoice-title {
+            font-size: 34px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .invoice-number {
+            color: #6b7280;
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #198754;
+            padding-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table td {
+            padding: 12px 0;
+        }
+
+        .label {
+            color: #6b7280;
+            width: 35%;
+        }
+
+        .value {
+            font-weight: bold;
+        }
+
+        .price-box {
+            margin-top: 40px;
+            background: #f3f4f6;
+            padding: 25px;
+            border-radius: 14px;
+        }
+
+        .price-title {
+            font-size: 18px;
+            color: #6b7280;
+        }
+
+        .price-value {
+            font-size: 38px;
+            font-weight: bold;
+            color: #198754;
+            margin-top: 10px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: bold;
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .footer {
+            margin-top: 70px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="header">
+
+        <div>
+
+            <div class="logo">
+
+                Car<span>Book</span>
+
+            </div>
+
+            <div>
+                Premium Car Rental Platform
+            </div>
+
+        </div>
+
+        <div>
+
+            <div class="invoice-title">
+
+                INVOICE
+
+            </div>
+
+            <div class="invoice-number">
+
+                Reservation #{{ reservation.id }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {# CUSTOMER #}
+    <div class="section">
+
+        <div class="section-title">
+
+            Customer Information
+
+        </div>
+
+        <table>
+
+            <tr>
+
+                <td class="label">
+                    Full Name
+                </td>
+
+                <td class="value">
+                    {{ reservation.fullName }}
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="label">
+                    Email
+                </td>
+
+                <td class="value">
+                    {{ reservation.user.email }}
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="label">
+                    Phone
+                </td>
+
+                <td class="value">
+                    {{ reservation.phoneNumber }}
+                </td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+    {# CAR #}
+    <div class="section">
+
+        <div class="section-title">
+
+            Vehicle Information
+
+        </div>
+
+        <table>
+
+            <tr>
+
+                <td class="label">
+                    Vehicle
+                </td>
+
+                <td class="value">
+
+                    {{ reservation.car.brand }}
+                    {{ reservation.car.model }}
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="label">
+                    Start Date
+                </td>
+
+                <td class="value">
+
+                    {{ reservation.startDate|date('d M Y') }}
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="label">
+                    End Date
+                </td>
+
+                <td class="value">
+
+                    {{ reservation.endDate|date('d M Y') }}
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="label">
+                    Reservation Status
+                </td>
+
+                <td>
+
+                    <span class="status">
+
+                        {{ reservation.status|capitalize }}
+
+                    </span>
+
+                </td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+    {# TOTAL #}
+    <div class="price-box">
+
+        <div class="price-title">
+
+            Total Amount
+
+        </div>
+
+        <div class="price-value">
+
+            {{ reservation.totalPrice }} €
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+
+        Thank you for choosing CarBook.<br>
+        We wish you a pleasant journey.
+
+    </div>
+
+</body>
+
+</html>

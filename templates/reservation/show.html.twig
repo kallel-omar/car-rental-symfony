@@ -1,4 +1,3 @@
-
 {% extends 'admin/layout.html.twig' %}
 
 {% block title %}Reservation Details{% endblock %}
@@ -11,6 +10,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <div>
+
             <h1 class="fw-bold mb-1">
                 Reservation #{{ reservation.id }}
             </h1>
@@ -18,11 +18,14 @@
             <p class="text-muted mb-0">
                 Reservation details and verification
             </p>
+
         </div>
 
         <a href="{{ path('app_reservation_index') }}"
            class="btn btn-outline-secondary">
+
             ← Back
+
         </a>
 
     </div>
@@ -57,31 +60,39 @@
 
                             <tr>
                                 <th>Car</th>
+
                                 <td>
                                     {{ reservation.car.brand }}
                                     {{ reservation.car.model }}
                                 </td>
+
                             </tr>
 
                             <tr>
                                 <th>Start Date</th>
+
                                 <td>
                                     {{ reservation.startDate|date('d M Y') }}
                                 </td>
+
                             </tr>
 
                             <tr>
                                 <th>End Date</th>
+
                                 <td>
                                     {{ reservation.endDate|date('d M Y') }}
                                 </td>
+
                             </tr>
 
                             <tr>
                                 <th>Total Price</th>
+
                                 <td class="fw-bold text-success">
                                     {{ reservation.totalPrice }} €
                                 </td>
+
                             </tr>
 
                             <tr>
@@ -116,6 +127,7 @@
                                     {% endif %}
 
                                 </td>
+
                             </tr>
 
                             <tr>
@@ -141,19 +153,27 @@
                                             Rejected
                                         </span>
 
+                                    {% elseif reservation.status == 'completed' %}
+
+                                        <span class="badge bg-primary">
+                                            Completed
+                                        </span>
+
                                     {% endif %}
 
                                 </td>
+
                             </tr>
 
                         </tbody>
 
                     </table>
 
-                    {# APPROVE / REJECT BUTTONS #}
-                    {% if reservation.status == 'pending' %}
+                    {# ACTION BUTTONS #}
+                    <div class="d-flex gap-3 mt-4 flex-wrap">
 
-                        <div class="d-flex gap-3 mt-4">
+                        {# PENDING #}
+                        {% if reservation.status == 'pending' %}
 
                             <form method="post"
                                   action="{{ path('app_reservation_approve', {'id': reservation.id}) }}">
@@ -173,9 +193,23 @@
 
                             </form>
 
-                        </div>
+                        {% endif %}
 
-                    {% endif %}
+                        {# APPROVED #}
+                        {% if reservation.status == 'approved' %}
+
+                            <form method="post"
+                                  action="{{ path('app_reservation_complete', {'id': reservation.id}) }}">
+
+                                <button class="btn btn-primary">
+                                    🚗 Return Car
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+                    </div>
 
                 </div>
 
@@ -237,4 +271,3 @@
 </div>
 
 {% endblock %}
-

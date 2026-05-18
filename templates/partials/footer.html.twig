@@ -1,60 +1,253 @@
-<footer class="ftco-footer ftco-bg-dark ftco-section">
-      <div class="container">
-        <div class="row mb-5">
-          <div class="col-md">
-            <div class="ftco-footer-widget mb-4">
-              <h2 class="ftco-heading-2"><a href="#" class="logo">Car<span>book</span></a></h2>
-              <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-              <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
-                <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
-                <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
-                <li class="ftco-animate"><a href="#"><span class="icon-instagram"></span></a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md">
-            <div class="ftco-footer-widget mb-4 ml-md-5">
-              <h2 class="ftco-heading-2">Information</h2>
-              <ul class="list-unstyled">
-                <li><a href="#" class="py-2 d-block">About</a></li>
-                <li><a href="#" class="py-2 d-block">Services</a></li>
-                <li><a href="#" class="py-2 d-block">Term and Conditions</a></li>
-                <li><a href="#" class="py-2 d-block">Best Price Guarantee</a></li>
-                <li><a href="#" class="py-2 d-block">Privacy &amp; Cookies Policy</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md">
-             <div class="ftco-footer-widget mb-4">
-              <h2 class="ftco-heading-2">Customer Support</h2>
-              <ul class="list-unstyled">
-                <li><a href="#" class="py-2 d-block">FAQ</a></li>
-                <li><a href="#" class="py-2 d-block">Payment Option</a></li>
-                <li><a href="#" class="py-2 d-block">Booking Tips</a></li>
-                <li><a href="#" class="py-2 d-block">How it works</a></li>
-                <li><a href="#" class="py-2 d-block">Contact Us</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md">
-            <div class="ftco-footer-widget mb-4">
-            	<h2 class="ftco-heading-2">Have a Questions?</h2>
-            	<div class="block-23 mb-3">
-	              <ul>
-	                <li><span class="icon icon-map-marker"></span><span class="text">203 Fake St. Mountain View, San Francisco, California, USA</span></li>
-	                <li><a href="#"><span class="icon icon-phone"></span><span class="text">+2 392 3929 210</span></a></li>
-	                <li><a href="#"><span class="icon icon-envelope"></span><span class="text">info@yourdomain.com</span></a></li>
-	              </ul>
-	            </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12 text-center">
+<style>
 
-            <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart color-danger" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
-          </div>
+.clean-footer {
+    background: #f8f9fa;
+    padding-top: 80px;
+    padding-bottom: 30px;
+    margin-top: 90px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+.footer-brand {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #111;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 18px;
+}
+
+.footer-brand span {
+    color: #198754;
+}
+
+.footer-description {
+    color: #6c757d;
+    line-height: 1.9;
+    font-size: 15px;
+}
+
+.footer-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 24px;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 14px;
+}
+
+.footer-links a {
+    color: #6c757d;
+    text-decoration: none;
+    transition: 0.2s ease;
+    font-weight: 500;
+}
+
+.footer-links a:hover {
+    color: #198754;
+    padding-left: 4px;
+}
+
+.footer-socials {
+    display: flex;
+    gap: 14px;
+    margin-top: 24px;
+}
+
+.footer-socials a {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: white;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #198754;
+    text-decoration: none;
+    transition: 0.25s ease;
+}
+
+.footer-socials a:hover {
+    background: #198754;
+    color: white;
+    transform: translateY(-3px);
+}
+
+.footer-contact {
+    color: #6c757d;
+    line-height: 2;
+    font-weight: 500;
+}
+
+.footer-bottom {
+    margin-top: 60px;
+    padding-top: 25px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    text-align: center;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+</style>
+
+<footer class="clean-footer">
+
+    <div class="container">
+
+        <div class="row gy-5">
+
+            <div class="col-lg-4">
+
+                <a href="/"
+                   class="footer-brand">
+
+                    Car<span>Book</span>
+
+                </a>
+
+                <p class="footer-description">
+
+                    Modern premium car rental platform with
+                    comfortable vehicles and seamless booking experience.
+
+                </p>
+
+                <div class="footer-socials">
+
+                    <a href="#">
+                        <span class="icon-facebook"></span>
+                    </a>
+
+                    <a href="#">
+                        <span class="icon-instagram"></span>
+                    </a>
+
+                    <a href="#">
+                        <span class="icon-twitter"></span>
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+
+                <h5 class="footer-title">
+                    Navigation
+                </h5>
+
+                <ul class="footer-links">
+
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    <li>
+                        <a href="{{ path('app_car_index') }}">
+                            Cars
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#">
+                            About
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#">
+                            Contact
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+
+                <h5 class="footer-title">
+                    Account
+                </h5>
+
+                <ul class="footer-links">
+
+                    {% if app.user %}
+
+                        <li>
+                            <a href="{{ path('app_my_reservations') }}">
+                                My Reservations
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{ path('app_logout') }}">
+                                Logout
+                            </a>
+                        </li>
+
+                    {% else %}
+
+                        <li>
+                            <a href="{{ path('app_login') }}">
+                                Login
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{ path('app_register') }}">
+                                Register
+                            </a>
+                        </li>
+
+                    {% endif %}
+
+                </ul>
+
+            </div>
+
+            <div class="col-lg-4">
+
+                <h5 class="footer-title">
+                    Contact
+                </h5>
+
+                <div class="footer-contact">
+
+                    <div>
+                        📍 Tunisia
+                    </div>
+
+                    <div>
+                        📞 +216 00 000 000
+                    </div>
+
+                    <div>
+                        ✉️ contact@carbook.com
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
-      </div>
+
+        <div class="footer-bottom">
+
+            © {{ "now"|date("Y") }} CarBook —
+            Premium Car Rental Platform.
+
+        </div>
+
+    </div>
+
+</footer>

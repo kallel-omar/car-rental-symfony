@@ -12,17 +12,24 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 #[Route('/reservation')]
 final class ReservationController extends AbstractController
 {
     #[Route(name: 'app_reservation_index', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function index(
         ReservationRepository $reservationRepository
     ): Response {
 
         return $this->render('reservation/index.html.twig', [
-            'reservations' => $reservationRepository->findAll(),
+
+            'reservations' => $reservationRepository->findBy([
+                'status' => ['pending', 'approved']
+            ]),
         ]);
     }
 
@@ -35,6 +42,17 @@ final class ReservationController extends AbstractController
     ): Response {
 
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        // EMAIL VERIFICATION CHECK
+        if (!$this->getUser()->isVerified()) {
+
+            $this->addFlash(
+                'danger',
+                'Please verify your email before reserving a car.'
+            );
+
+            return $this->redirectToRoute('home');
+        }
 
         $reservation = new Reservation();
 
@@ -116,10 +134,7 @@ final class ReservationController extends AbstractController
                 );
             }
 
-
             // CIN IMAGE
-
-
             $cinFile = $form->get('cinImage')->getData();
 
             if ($cinFile) {
@@ -155,10 +170,7 @@ final class ReservationController extends AbstractController
                 $reservation->setCinImage($newFilename);
             }
 
-
             // LICENSE IMAGE
-
-
             $licenseFile = $form->get('licenseImage')->getData();
 
             if ($licenseFile) {
@@ -194,10 +206,7 @@ final class ReservationController extends AbstractController
                 $reservation->setLicenseImage($newFilename);
             }
 
-
             // TOTAL PRICE
-
-
             $days = max(
                 1,
                 $start->diff($end)->days
@@ -207,8 +216,10 @@ final class ReservationController extends AbstractController
                 $days * $car->getPricePerDay()
             );
 
+            // DEFAULT STATUS
             $reservation->setStatus('pending');
 
+            // SAVE
             $entityManager->persist($reservation);
 
             $entityManager->flush();
@@ -219,7 +230,7 @@ final class ReservationController extends AbstractController
             );
 
             return $this->redirectToRoute(
-                'app_reservation_index'
+                'app_my_reservations'
             );
         }
 
@@ -232,12 +243,8 @@ final class ReservationController extends AbstractController
         );
     }
 
-
-    // CALENDAR ROUTE
-
-
-
     #[Route('/calendar', name: 'app_reservation_calendar', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function calendar(
         ReservationRepository $reservationRepository
     ): Response {
@@ -269,7 +276,6 @@ final class ReservationController extends AbstractController
 
                     'approved' => '#198754',
                     'pending' => '#ffc107',
-                    'rejected' => '#dc3545',
 
                     default => '#6c757d',
                 },
@@ -278,7 +284,6 @@ final class ReservationController extends AbstractController
 
                     'approved' => '#198754',
                     'pending' => '#ffc107',
-                    'rejected' => '#dc3545',
 
                     default => '#6c757d',
                 },
@@ -293,7 +298,28 @@ final class ReservationController extends AbstractController
         );
     }
 
+    #[Route('/my-reservations', name: 'app_my_reservations', methods: ['GET'])]
+    public function myReservations(
+        ReservationRepository $reservationRepository
+    ): Response {
+
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $reservations = $reservationRepository->findBy(
+            ['user' => $this->getUser()],
+            ['id' => 'DESC']
+        );
+
+        return $this->render(
+            'reservation/my_reservations.html.twig',
+            [
+                'reservations' => $reservations,
+            ]
+        );
+    }
+
     #[Route('/{id}', name: 'app_reservation_show', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function show(
         Reservation $reservation
     ): Response {
@@ -307,6 +333,7 @@ final class ReservationController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_reservation_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function edit(
         Request $request,
         Reservation $reservation,
@@ -344,6 +371,7 @@ final class ReservationController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_reservation_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(
         Request $request,
         Reservation $reservation,
@@ -373,6 +401,7 @@ final class ReservationController extends AbstractController
     }
 
     #[Route('/{id}/approve', name: 'app_reservation_approve', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function approve(
         Reservation $reservation,
         EntityManagerInterface $entityManager
@@ -396,6 +425,7 @@ final class ReservationController extends AbstractController
     }
 
     #[Route('/{id}/reject', name: 'app_reservation_reject', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function reject(
         Reservation $reservation,
         EntityManagerInterface $entityManager
@@ -413,6 +443,93 @@ final class ReservationController extends AbstractController
         return $this->redirectToRoute(
             'app_reservation_show',
             ['id' => $reservation->getId()]
+        );
+    }
+
+    #[Route('/{id}/complete', name: 'app_reservation_complete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function complete(
+        Reservation $reservation,
+        EntityManagerInterface $entityManager
+    ): Response {
+
+        $reservation->setStatus('completed');
+
+        $reservation->getCar()->setStatus('available');
+
+        $entityManager->flush();
+
+        $this->addFlash(
+            'success',
+            'Car returned successfully.'
+        );
+
+        return $this->redirectToRoute(
+            'app_reservation_show',
+            ['id' => $reservation->getId()]
+        );
+    }
+
+    #[Route('/{id}/invoice', name: 'app_reservation_invoice', methods: ['GET'])]
+    public function invoice(
+        Reservation $reservation
+    ): Response {
+
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        // SECURITY CHECK
+        if (
+            $reservation->getUser() !== $this->getUser()
+            && !$this->isGranted('ROLE_ADMIN')
+        ) {
+
+            throw $this->createAccessDeniedException();
+        }
+
+        // STATUS CHECK
+        if (!in_array($reservation->getStatus(), ['approved', 'completed'])) {
+
+            $this->addFlash(
+                'danger',
+                'Invoice is only available for approved or completed reservations.'
+            );
+
+            return $this->redirectToRoute('app_my_reservations');
+        }
+
+        $options = new Options();
+
+        $options->set('defaultFont', 'Arial');
+
+        $dompdf = new Dompdf($options);
+
+        $html = $this->renderView(
+            'reservation/invoice.html.twig',
+            [
+                'reservation' => $reservation,
+            ]
+        );
+
+        $dompdf->loadHtml($html);
+
+        $dompdf->setPaper('A4', 'portrait');
+
+        $dompdf->render();
+
+        return new Response(
+
+            $dompdf->stream(
+                'reservation-'.$reservation->getId().'.pdf',
+                [
+                    'Attachment' => true
+                ]
+            ),
+
+            200,
+
+            [
+                'Content-Type' => 'application/pdf'
+            ]
         );
     }
 }

@@ -1,62 +1,182 @@
-{{ form_start(form) }}
+{{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
 
-<div class="mb-3">
-    {{ form_label(form.brand) }}
-    {{ form_widget(form.brand, {'attr': {'class': 'form-control'}}) }}
-    {{ form_errors(form.brand) }}
+<div class="row">
+
+    {# BRAND #}
+    <div class="col-md-6 mb-3">
+
+        {{ form_label(form.brand) }}
+
+        {{ form_widget(form.brand, {
+            'attr': {'class': 'form-control'}
+        }) }}
+
+        {{ form_errors(form.brand) }}
+
+    </div>
+
+    {# MODEL #}
+    <div class="col-md-6 mb-3">
+
+        {{ form_label(form.model) }}
+
+        {{ form_widget(form.model, {
+            'attr': {'class': 'form-control'}
+        }) }}
+
+        {{ form_errors(form.model) }}
+
+    </div>
+
+    {# PRICE #}
+    <div class="col-md-6 mb-3">
+
+        {{ form_label(form.pricePerDay) }}
+
+        {{ form_widget(form.pricePerDay, {
+            'attr': {'class': 'form-control'}
+        }) }}
+
+        {{ form_errors(form.pricePerDay) }}
+
+    </div>
+
+    {# REGISTRATION NUMBER #}
+    <div class="col-md-6 mb-3">
+
+        {{ form_label(form.registrationNumber) }}
+
+        {{ form_widget(form.registrationNumber, {
+            'attr': {'class': 'form-control'}
+        }) }}
+
+        {{ form_errors(form.registrationNumber) }}
+
+    </div>
+
+    {# YEAR #}
+    <div class="col-md-4 mb-3">
+
+        {{ form_label(form.year) }}
+
+        {{ form_widget(form.year, {
+            'attr': {'class': 'form-control'}
+        }) }}
+
+        {{ form_errors(form.year) }}
+
+    </div>
+
+    {# TRANSMISSION #}
+    <div class="col-md-4 mb-3">
+
+        {{ form_label(form.transmission) }}
+
+        {{ form_widget(form.transmission, {
+            'attr': {'class': 'form-select'}
+        }) }}
+
+        {{ form_errors(form.transmission) }}
+
+    </div>
+
+    {# FUEL TYPE #}
+    <div class="col-md-4 mb-3">
+
+        {{ form_label(form.fuelType) }}
+
+        {{ form_widget(form.fuelType, {
+            'attr': {'class': 'form-select'}
+        }) }}
+
+        {{ form_errors(form.fuelType) }}
+
+    </div>
+
+    {# SEATS #}
+    <div class="col-md-6 mb-3">
+
+        {{ form_label(form.seats) }}
+
+        {{ form_widget(form.seats, {
+            'attr': {'class': 'form-control'}
+        }) }}
+
+        {{ form_errors(form.seats) }}
+
+    </div>
+
+    {# IMAGE #}
+    <div class="col-md-6 mb-3">
+
+        {{ form_label(form.image) }}
+
+        {{ form_widget(form.image, {
+            'attr': {'class': 'form-control'}
+        }) }}
+
+        {{ form_errors(form.image) }}
+
+    </div>
+
+    {# DESCRIPTION #}
+    <div class="col-12 mb-3">
+
+        {{ form_label(form.description) }}
+
+        {{ form_widget(form.description, {
+            'attr': {
+                'class': 'form-control',
+                'rows': 5
+            }
+        }) }}
+
+        {{ form_errors(form.description) }}
+
+    </div>
+
 </div>
 
-<div class="mb-3">
-    {{ form_label(form.model) }}
-    {{ form_widget(form.model, {'attr': {'class': 'form-control'}}) }}
-    {{ form_errors(form.model) }}
-</div>
-
-<div class="mb-3">
-    {{ form_label(form.pricePerDay) }}
-    {{ form_widget(form.pricePerDay, {'attr': {'class': 'form-control'}}) }}
-    {{ form_errors(form.pricePerDay) }}
-</div>
-
-<div class="mb-3">
-    {{ form_label(form.image) }}
-    {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
-    {{ form_errors(form.image) }}
-</div>
-
-<div class="mb-3">
-    {{ form_label(form.registrationNumber) }}
-    {{ form_widget(form.registrationNumber, {'attr': {'class': 'form-control'}}) }}
-    {{ form_errors(form.registrationNumber) }}
-</div>
-
+{# STATUS #}
 <div class="mb-4">
-    <label class="form-label">Status</label>
 
-    <div class="d-flex gap-3">
+    <label class="form-label">
+        Status
+    </label>
+
+    <div class="d-flex gap-4">
+
         <div class="form-check">
+
             {{ form_widget(form.status.children[0], {
                 'attr': {'class': 'form-check-input'}
             }) }}
+
             <label class="form-check-label text-success">
                 🟢 Available
             </label>
+
         </div>
 
         <div class="form-check">
+
             {{ form_widget(form.status.children[1], {
                 'attr': {'class': 'form-check-input'}
             }) }}
+
             <label class="form-check-label text-danger">
                 🔴 Unavailable
             </label>
+
         </div>
+
     </div>
 
     {{ form_errors(form.status) }}
+
 </div>
 
-<button class="btn btn-success">
+<button class="btn btn-success px-4">
     {{ button_label|default('Save') }}
 </button>
 

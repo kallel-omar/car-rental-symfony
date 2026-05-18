@@ -4,110 +4,476 @@
 
 {% block body %}
 
-<h1 class="mb-4">Dashboard</h1>
+<style>
 
-<div class="row">
+.dashboard-header {
+    margin-bottom: 40px;
+}
 
-    <div class="col-md-4">
-        <div class="card bg-primary text-white shadow border-0 mb-4">
-            <div class="card-body d-flex justify-content-between align-items-center">
+.dashboard-title {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #111827;
+}
+
+.dashboard-subtitle {
+    color: #6b7280;
+    margin-top: 8px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 24px;
+    padding: 30px;
+    height: 100%;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+    transition: 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.04);
+}
+
+.stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 35px rgba(0,0,0,0.08);
+}
+
+.stat-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: white;
+}
+
+.bg-cars {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.bg-reservations {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.bg-revenue {
+    background: linear-gradient(135deg, #111827, #374151);
+}
+
+.stat-label {
+    color: #6b7280;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.stat-number {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #111827;
+}
+
+.section-card {
+    background: white;
+    border-radius: 28px;
+    padding: 35px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+    margin-top: 40px;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #111827;
+}
+
+.custom-table thead th {
+    border: none;
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 700;
+    padding-bottom: 18px;
+}
+
+.custom-table tbody td {
+    border-top: 1px solid #f1f3f5;
+    padding: 18px 0;
+    vertical-align: middle;
+    font-weight: 500;
+}
+
+.price-text {
+    color: #10b981;
+    font-weight: 700;
+}
+
+.quick-actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    padding: 14px 24px;
+    border-radius: 16px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: 0.25s ease;
+}
+
+.action-primary {
+    background: #111827;
+    color: white;
+}
+
+.action-primary:hover {
+    background: #000;
+    color: white;
+}
+
+.action-success {
+    background: #198754;
+    color: white;
+}
+
+.action-success:hover {
+    background: #157347;
+    color: white;
+}
+
+.chart-container {
+    height: 380px;
+}
+
+</style>
+
+<div class="dashboard-header">
+
+    <h1 class="dashboard-title">
+
+        Admin Dashboard
+
+    </h1>
+
+    <p class="dashboard-subtitle">
+
+        Welcome back — manage your cars, reservations and analytics.
+
+    </p>
+
+</div>
+
+<div class="row g-4">
+
+    {# CARS #}
+    <div class="col-lg-4">
+
+        <div class="stat-card">
+
+            <div class="d-flex justify-content-between align-items-center">
+
                 <div>
-                <a href="{{ path('admin_cars') }}" class="btn btn-primary">
 
-                 <h5> Cars</h5>  </a>
-                    <h2>{{ carsCount }}</h2>
+                    <div class="stat-label">
+
+                        Total Cars
+
+                    </div>
+
+                    <div class="stat-number">
+
+                        {{ carsCount }}
+
+                    </div>
+
                 </div>
-                <i class="fa-solid fa-car fa-3x"></i>
+
+                <div class="stat-icon bg-cars">
+
+                    🚘
+
+                </div>
+
             </div>
+
         </div>
+
     </div>
 
-    <div class="col-md-4" >
-        <div class="card bg-success text-white shadow border-0 mb-4">
-            <div class="card-body d-flex justify-content-between align-items-center">
+    {# RESERVATIONS #}
+    <div class="col-lg-4">
+
+        <div class="stat-card">
+
+            <div class="d-flex justify-content-between align-items-center">
+
                 <div>
-                    <h5>Reservations</h5>
-                    <h2>{{ reservationsCount }}</h2>
+
+                    <div class="stat-label">
+
+                        Reservations
+
+                    </div>
+
+                    <div class="stat-number">
+
+                        {{ reservationsCount }}
+
+                    </div>
+
                 </div>
-                <i class="fa-solid fa-calendar-check fa-3x"></i>
+
+                <div class="stat-icon bg-reservations">
+
+                    📅
+
+                </div>
+
             </div>
+
         </div>
+
     </div>
 
-    <div class="col-md-4">
-        <div class="card bg-dark text-white shadow border-0 mb-4">
-            <div class="card-body d-flex justify-content-between align-items-center">
+    {# REVENUE #}
+    <div class="col-lg-4">
+
+        <div class="stat-card">
+
+            <div class="d-flex justify-content-between align-items-center">
+
                 <div>
-                    <h5>Revenue</h5>
-                    <h2>{{ totalRevenue }} €</h2>
+
+                    <div class="stat-label">
+
+                        Total Revenue
+
+                    </div>
+
+                    <div class="stat-number">
+
+                        {{ totalRevenue }} €
+
+                    </div>
+
                 </div>
-                <i class="fa-solid fa-sack-dollar fa-3x"></i>
+
+                <div class="stat-icon bg-revenue">
+
+                    💰
+
+                </div>
+
             </div>
+
         </div>
+
     </div>
 
 </div>
 
-<hr>
+{# QUICK ACTIONS #}
+<div class="section-card">
 
-<h3>Latest Reservations</h3>
+    <h3 class="section-title">
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>User</th>
-            <th>Car</th>
-            <th>Price</th>
-        </tr>
-    </thead>
+        Quick Actions
 
-    <tbody>
-    {% for r in reservations %}
-        <tr>
-            <td>{{ r.id }}</td>
-            <td>{{ r.user.email }}</td>
-            <td>{{ r.car.model }}</td>
-            <td>{{ r.totalPrice }} €</td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+    </h3>
 
-<div class="card shadow border-0 mt-4">
-    <div class="card-body">
-        <h4 class="mb-4">Revenue Analytics</h4>
+    <div class="quick-actions">
+
+        <a href="{{ path('admin_cars') }}"
+           class="action-btn action-primary">
+
+            Manage Cars
+
+        </a>
+
+        <a href="{{ path('app_car_new') }}"
+           class="action-btn action-success">
+
+            Add New Car
+
+        </a>
+
+        <a href="{{ path('app_reservation_index') }}"
+           class="action-btn action-primary">
+
+            Reservations
+
+        </a>
+
+    </div>
+
+</div>
+
+{# LATEST RESERVATIONS #}
+<div class="section-card">
+
+    <h3 class="section-title">
+
+        Latest Reservations
+
+    </h3>
+
+    <div class="table-responsive">
+
+        <table class="table custom-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Car</th>
+                    <th>Status</th>
+                    <th>Total</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for r in reservations %}
+
+                    <tr>
+
+                        <td>
+                            #{{ r.id }}
+                        </td>
+
+                        <td>
+                            {{ r.user.email }}
+                        </td>
+
+                        <td>
+                            {{ r.car.brand }}
+                            {{ r.car.model }}
+                        </td>
+
+                        <td>
+
+                            {% if r.status == 'pending' %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Pending
+                                </span>
+
+                            {% elseif r.status == 'approved' %}
+
+                                <span class="badge bg-success">
+                                    Approved
+                                </span>
+
+                            {% elseif r.status == 'completed' %}
+
+                                <span class="badge bg-primary">
+                                    Completed
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-danger">
+                                    Rejected
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td class="price-text">
+
+                            {{ r.totalPrice }} €
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{# CHART #}
+<div class="section-card">
+
+    <h3 class="section-title">
+
+        Revenue Analytics
+
+    </h3>
+
+    <div class="chart-container">
+
         <canvas id="revenueChart"></canvas>
+
     </div>
+
 </div>
 
-
+{% endblock %}
 
 {% block javascripts %}
+
+{{ parent() }}
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
+
 const ctx = document.getElementById('revenueChart');
 
 new Chart(ctx, {
-    type: 'bar',
+
+    type: 'line',
+
     data: {
+
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+
         datasets: [{
+
             label: 'Revenue (€)',
+
             data: [1200, 1900, 800, 2100, 1700, 2500],
-            borderWidth: 1
+
+            tension: 0.4,
+
+            fill: true
+
         }]
     },
+
     options: {
+
         responsive: true,
+
+        maintainAspectRatio: false,
+
+        plugins: {
+
+            legend: {
+                display: true
+            }
+        },
+
         scales: {
-            y: { beginAtZero: true }
+
+            y: {
+                beginAtZero: true
+            }
         }
     }
 });
+
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
-{% endblock %}
+

@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CarRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Reservation;
 
@@ -31,6 +32,20 @@ class Car
     #[ORM\Column(length: 255, unique: true)]
     private ?string $registrationNumber = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $year = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $transmission = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $fuelType = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $seats = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
 
     #[ORM\Column(length: 255)]
     private ?string $status = null;
@@ -92,9 +107,81 @@ class Car
         return $this->image;
     }
 
-    public function setImage(string $image): static
+    public function setImage(?string $image): static
     {
         $this->image = $image;
+
+        return $this;
+    }
+
+    public function getRegistrationNumber(): ?string
+    {
+        return $this->registrationNumber;
+    }
+
+    public function setRegistrationNumber(string $registrationNumber): static
+    {
+        $this->registrationNumber = $registrationNumber;
+
+        return $this;
+    }
+
+    public function getYear(): ?int
+    {
+        return $this->year;
+    }
+
+    public function setYear(?int $year): static
+    {
+        $this->year = $year;
+
+        return $this;
+    }
+
+    public function getTransmission(): ?string
+    {
+        return $this->transmission;
+    }
+
+    public function setTransmission(?string $transmission): static
+    {
+        $this->transmission = $transmission;
+
+        return $this;
+    }
+
+    public function getFuelType(): ?string
+    {
+        return $this->fuelType;
+    }
+
+    public function setFuelType(?string $fuelType): static
+    {
+        $this->fuelType = $fuelType;
+
+        return $this;
+    }
+
+    public function getSeats(): ?int
+    {
+        return $this->seats;
+    }
+
+    public function setSeats(?int $seats): static
+    {
+        $this->seats = $seats;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }
@@ -122,7 +209,9 @@ class Car
     public function addReservation(Reservation $reservation): static
     {
         if (!$this->reservations->contains($reservation)) {
+
             $this->reservations->add($reservation);
+
             $reservation->setCar($this);
         }
 
@@ -132,25 +221,16 @@ class Car
     public function removeReservation(Reservation $reservation): static
     {
         if ($this->reservations->removeElement($reservation)) {
-            // set the owning side to null (unless already changed)
+
             if ($reservation->getCar() === $this) {
+
                 $reservation->setCar(null);
             }
         }
 
         return $this;
     }
-    public function getRegistrationNumber(): ?string
-    {
-        return $this->registrationNumber;
-    }
 
-    public function setRegistrationNumber(string $registrationNumber): static
-    {
-        $this->registrationNumber = $registrationNumber;
-
-        return $this;
-    }
     public function __toString(): string
     {
         return $this->getBrand() . ' ' . $this->getModel();

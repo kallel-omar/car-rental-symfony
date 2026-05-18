@@ -1,0 +1,178 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Reservations{% endblock %}
+
+{% block body %}
+
+<section class="ftco-section bg-light">
+
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center mb-5">
+
+            <div>
+
+                <h2 class="fw-bold mb-1">
+                    My Reservations
+                </h2>
+
+                <p class="text-muted mb-0">
+                    View all your rental history
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table class="table align-middle mb-0">
+
+                        <thead class="table-dark">
+
+                            <tr>
+
+                                <th>#</th>
+                                <th>Car</th>
+                                <th>Dates</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Invoice</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for reservation in reservations %}
+
+                                <tr>
+
+                                    <td class="fw-bold">
+                                        #{{ reservation.id }}
+                                    </td>
+
+                                    <td>
+
+                                        <div class="fw-semibold">
+
+                                            {{ reservation.car.brand }}
+                                            {{ reservation.car.model }}
+
+                                        </div>
+
+                                    </td>
+
+                                    <td>
+
+                                        <div>
+
+                                            <strong>From:</strong>
+                                            {{ reservation.startDate|date('d M Y') }}
+
+                                        </div>
+
+                                        <div>
+
+                                            <strong>To:</strong>
+                                            {{ reservation.endDate|date('d M Y') }}
+
+                                        </div>
+
+                                    </td>
+
+                                    <td class="fw-bold text-success">
+
+                                        {{ reservation.totalPrice }} €
+
+                                    </td>
+
+                                    <td>
+
+                                        {% if reservation.status == 'pending' %}
+
+                                            <span class="badge bg-warning text-dark rounded-pill px-3 py-2">
+                                                Pending
+                                            </span>
+
+                                        {% elseif reservation.status == 'approved' %}
+
+                                            <span class="badge bg-success rounded-pill px-3 py-2">
+                                                Approved
+                                            </span>
+
+                                        {% elseif reservation.status == 'rejected' %}
+
+                                            <span class="badge bg-danger rounded-pill px-3 py-2">
+                                                Rejected
+                                            </span>
+
+                                        {% elseif reservation.status == 'completed' %}
+
+                                            <span class="badge bg-primary rounded-pill px-3 py-2">
+                                                Completed
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+
+                                     {% if reservation.status in ['approved', 'completed'] %}
+
+                                         <a href="{{ path('app_reservation_invoice', {'id': reservation.id}) }}"
+                                            class="btn btn-dark btn-sm rounded-pill px-3">
+
+                                             Download
+
+                                         </a>
+
+                                     {% else %}
+
+                                         <button class="btn btn-secondary btn-sm rounded-pill px-3" disabled>
+
+                                             Unavailable
+
+                                         </button>
+
+                                     {% endif %}
+                                    </td>
+
+                                </tr>
+
+                            {% else %}
+
+                                <tr>
+
+                                    <td colspan="6"
+                                        class="text-center py-5 text-muted">
+
+                                        No reservations found
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
