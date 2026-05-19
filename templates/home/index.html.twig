@@ -6,201 +6,307 @@
 
 <style>
 
-.hero-modern {
-    min-height: 92vh;
+body{
+    background:#f8f9fa;
+}
+
+.hero-modern{
+    min-height:92vh;
     background:
-        linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+        linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)),
         url('{{ asset("images/bg_1.jpg") }}');
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    border-radius: 0 0 40px 40px;
+    background-size:cover;
+    background-position:center;
+    display:flex;
+    align-items:center;
+    border-radius:0 0 45px 45px;
+    overflow:hidden;
 }
 
-.hero-content {
-    max-width: 700px;
+.hero-content{
+    max-width:700px;
 }
 
-.hero-badge {
-    display: inline-block;
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(10px);
-    color: white;
-    padding: 10px 18px;
-    border-radius: 50px;
-    margin-bottom: 24px;
-    font-weight: 600;
-    font-size: 14px;
+.hero-badge{
+    display:inline-block;
+    background:rgba(255,255,255,.12);
+    backdrop-filter:blur(10px);
+    color:white;
+    padding:10px 18px;
+    border-radius:50px;
+    margin-bottom:25px;
+    font-size:14px;
+    font-weight:600;
 }
 
-.hero-title {
-    font-size: 4rem;
-    font-weight: 800;
-    color: white;
-    line-height: 1.15;
-    margin-bottom: 24px;
+.hero-title{
+    color:white;
+    font-size:4rem;
+    font-weight:800;
+    line-height:1.1;
+    margin-bottom:25px;
 }
 
-.hero-text {
-    color: rgba(255,255,255,0.85);
-    font-size: 18px;
-    line-height: 1.8;
-    margin-bottom: 35px;
+.hero-text{
+    color:rgba(255,255,255,.85);
+    font-size:18px;
+    line-height:1.8;
+    margin-bottom:35px;
 }
 
-.hero-buttons {
-    display: flex;
-    gap: 18px;
-    flex-wrap: wrap;
+.hero-buttons{
+    display:flex;
+    gap:18px;
+    flex-wrap:wrap;
 }
 
-.hero-btn-primary {
-    background: #198754;
-    color: white;
-    padding: 15px 28px;
-    border-radius: 16px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: 0.25s ease;
-    box-shadow: 0 10px 24px rgba(25,135,84,0.3);
+.hero-btn-primary{
+    background:linear-gradient(135deg,#198754,#157347);
+    color:white;
+    padding:15px 30px;
+    border-radius:16px;
+    text-decoration:none;
+    font-weight:700;
+    transition:.25s ease;
+    box-shadow:0 10px 24px rgba(25,135,84,.25);
 }
 
-.hero-btn-primary:hover {
-    background: #157347;
-    color: white;
-    transform: translateY(-2px);
+.hero-btn-primary:hover{
+    color:white;
+    transform:translateY(-2px);
 }
 
-.hero-btn-secondary {
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(10px);
-    color: white;
-    padding: 15px 28px;
-    border-radius: 16px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: 0.25s ease;
+.hero-btn-secondary{
+    background:rgba(255,255,255,.12);
+    backdrop-filter:blur(10px);
+    color:white;
+    padding:15px 30px;
+    border-radius:16px;
+    text-decoration:none;
+    font-weight:700;
+    transition:.25s ease;
 }
 
-.hero-btn-secondary:hover {
-    background: rgba(255,255,255,0.2);
-    color: white;
+.hero-btn-secondary:hover{
+    background:rgba(255,255,255,.2);
+    color:white;
 }
 
-.section-modern {
-    padding: 100px 0;
+.section-modern{
+    padding:100px 0;
 }
 
-.section-title {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin-bottom: 16px;
-    color: #111;
+.section-title{
+    font-size:2.5rem;
+    font-weight:800;
+    color:#111827;
+    margin-bottom:15px;
 }
 
-.section-subtitle {
-    color: #6c757d;
-    max-width: 700px;
-    margin: auto;
-    line-height: 1.8;
+.section-subtitle{
+    color:#6b7280;
+    max-width:700px;
+    margin:auto;
+    line-height:1.8;
 }
 
-.feature-card {
-    background: white;
-    padding: 40px 30px;
-    border-radius: 24px;
-    text-align: center;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.05);
-    transition: 0.3s ease;
-    height: 100%;
+.feature-card{
+    background:white;
+    border-radius:28px;
+    padding:40px 30px;
+    text-align:center;
+    height:100%;
+    transition:.3s ease;
+    box-shadow:0 10px 35px rgba(0,0,0,.06);
 }
 
-.feature-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 14px 35px rgba(0,0,0,0.08);
+.feature-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 18px 45px rgba(0,0,0,.1);
 }
 
-.feature-icon {
-    width: 80px;
-    height: 80px;
-    margin: auto auto 24px;
-    border-radius: 22px;
-    background: #198754;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 2rem;
+.feature-icon{
+    width:85px;
+    height:85px;
+    border-radius:24px;
+    background:#198754;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:auto auto 24px;
+    font-size:2rem;
 }
 
-.feature-title {
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 14px;
+.feature-title{
+    font-size:1.3rem;
+    font-weight:700;
+    margin-bottom:15px;
+    color:#111827;
 }
 
-.feature-text {
-    color: #6c757d;
-    line-height: 1.8;
+.feature-text{
+    color:#6b7280;
+    line-height:1.8;
 }
 
-.cta-section {
-    background: linear-gradient(135deg, #198754, #157347);
-    padding: 90px 40px;
-    border-radius: 40px;
-    text-align: center;
-    color: white;
+.car-card{
+    background:white;
+    border-radius:28px;
+    overflow:hidden;
+    height:100%;
+    transition:.3s ease;
+    box-shadow:0 10px 35px rgba(0,0,0,.06);
 }
 
-.cta-title {
-    font-size: 2.7rem;
-    font-weight: 800;
-    margin-bottom: 20px;
+.car-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 18px 45px rgba(0,0,0,.1);
 }
 
-.cta-text {
-    max-width: 700px;
-    margin: auto;
-    line-height: 1.8;
-    margin-bottom: 35px;
-    color: rgba(255,255,255,0.9);
+.car-image{
+    width:100%;
+    height:240px;
+    object-fit:cover;
 }
 
-.cta-btn {
-    background: white;
-    color: #198754;
-    padding: 15px 30px;
-    border-radius: 16px;
-    text-decoration: none;
-    font-weight: 700;
-    transition: 0.25s ease;
-    display: inline-block;
+.car-image-placeholder{
+    height:240px;
+    background:#f1f3f5;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
-.cta-btn:hover {
-    transform: translateY(-2px);
-    color: #157347;
+.car-body{
+    padding:28px;
 }
 
-@media(max-width: 991px) {
+.car-title{
+    font-size:1.4rem;
+    font-weight:800;
+    color:#111827;
+    margin-bottom:6px;
+}
 
-    .hero-title {
-        font-size: 2.8rem;
+.car-features{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:20px 0 25px;
+}
+
+.feature-badge{
+    background:#f3f4f6;
+    padding:8px 14px;
+    border-radius:50px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.price-box{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.price{
+    font-size:1.7rem;
+    font-weight:800;
+    color:#198754;
+}
+
+.price small{
+    color:#6b7280;
+    font-size:14px;
+}
+
+.status-badge{
+    padding:8px 15px;
+    border-radius:50px;
+    font-size:13px;
+    font-weight:700;
+}
+
+.available{
+    background:#d1e7dd;
+    color:#146c43;
+}
+
+.unavailable{
+    background:#f8d7da;
+    color:#842029;
+}
+
+.car-buttons{
+    display:flex;
+    gap:14px;
+    margin-top:24px;
+}
+
+.car-buttons .btn{
+    flex:1;
+    border-radius:14px;
+    padding:12px;
+    font-weight:700;
+}
+
+.cta-section{
+    background:linear-gradient(135deg,#198754,#157347);
+    padding:90px 40px;
+    border-radius:40px;
+    text-align:center;
+    color:white;
+}
+
+.cta-title{
+    font-size:2.7rem;
+    font-weight:800;
+    margin-bottom:20px;
+}
+
+.cta-text{
+    max-width:700px;
+    margin:auto;
+    line-height:1.8;
+    margin-bottom:35px;
+    color:rgba(255,255,255,.9);
+}
+
+.cta-btn{
+    background:white;
+    color:#198754;
+    padding:15px 30px;
+    border-radius:16px;
+    text-decoration:none;
+    font-weight:700;
+    transition:.25s ease;
+    display:inline-block;
+}
+
+.cta-btn:hover{
+    color:#157347;
+    transform:translateY(-2px);
+}
+
+@media(max-width:991px){
+
+    .hero-title{
+        font-size:2.7rem;
     }
 
-    .section-title {
-        font-size: 2rem;
+    .section-title{
+        font-size:2rem;
     }
 
-    .cta-title {
-        font-size: 2rem;
+    .cta-title{
+        font-size:2rem;
     }
+
 }
 
 </style>
 
-{# HERO #}
 <section class="hero-modern">
 
     <div class="container">
@@ -208,22 +314,15 @@
         <div class="hero-content">
 
             <div class="hero-badge">
-
                 Premium Car Rental Experience
-
             </div>
 
             <h1 class="hero-title">
-
                 Find The Perfect Car For Your Journey
-
             </h1>
 
             <p class="hero-text">
-
-                Discover modern, comfortable and affordable vehicles
-                with a seamless booking experience designed for your needs.
-
+                Discover premium vehicles with a modern booking experience.
             </p>
 
             <div class="hero-buttons">
@@ -254,7 +353,6 @@
 
 </section>
 
-{# FEATURES #}
 <section class="section-modern bg-light">
 
     <div class="container">
@@ -262,16 +360,11 @@
         <div class="text-center mb-5">
 
             <h2 class="section-title">
-
                 Why Choose CarBook
-
             </h2>
 
             <p class="section-subtitle">
-
-                We provide a modern rental experience with premium vehicles,
-                affordable prices and fast reservations.
-
+                Premium vehicles, fast booking and affordable prices.
             </p>
 
         </div>
@@ -287,15 +380,11 @@
                     </div>
 
                     <h4 class="feature-title">
-
                         Premium Vehicles
-
                     </h4>
 
                     <p class="feature-text">
-
-                        Choose from a wide selection of modern and comfortable vehicles.
-
+                        Modern and comfortable cars for every journey.
                     </p>
 
                 </div>
@@ -311,15 +400,11 @@
                     </div>
 
                     <h4 class="feature-title">
-
                         Fast Booking
-
                     </h4>
 
                     <p class="feature-text">
-
-                        Reserve your car in minutes with our simple booking process.
-
+                        Reserve your vehicle in just a few clicks.
                     </p>
 
                 </div>
@@ -335,15 +420,11 @@
                     </div>
 
                     <h4 class="feature-title">
-
                         Affordable Prices
-
                     </h4>
 
                     <p class="feature-text">
-
-                        Enjoy competitive pricing with no hidden fees.
-
+                        Competitive daily prices with no hidden fees.
                     </p>
 
                 </div>
@@ -355,7 +436,7 @@
     </div>
 
 </section>
-{# FEATURED CARS #}
+
 <section class="section-modern bg-light">
 
     <div class="container">
@@ -363,15 +444,11 @@
         <div class="text-center mb-5">
 
             <h2 class="section-title">
-
                 Featured Vehicles
-
             </h2>
 
             <p class="section-subtitle">
-
                 Explore our latest premium vehicles available for reservation.
-
             </p>
 
         </div>
@@ -382,24 +459,18 @@
 
                 <div class="col-lg-4 col-md-6">
 
-                    <div class="feature-card text-start p-0 overflow-hidden">
+                    <div class="car-card">
 
-                        {# IMAGE #}
                         {% if car.image %}
 
                             <img
                                 src="{{ asset('uploads/cars/' ~ car.image) }}"
-                                style="
-                                    width:100%;
-                                    height:240px;
-                                    object-fit:cover;
-                                "
+                                class="car-image"
                                 alt="{{ car.brand }}">
 
                         {% else %}
 
-                            <div class="d-flex align-items-center justify-content-center bg-light"
-                                 style="height:240px;">
+                            <div class="car-image-placeholder">
 
                                 <div class="text-center text-muted">
 
@@ -415,25 +486,47 @@
 
                         {% endif %}
 
-                        <div class="p-4">
+                        <div class="car-body">
 
-                            <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="car-title">
+                                {{ car.brand }} {{ car.model }}
+                            </h3>
 
-                                <h4 class="mb-0 fw-bold">
+                            <div class="car-features">
 
-                                    {{ car.brand }} {{ car.model }}
+                                <span class="feature-badge">
+                                    🚘 {{ car.transmission ?: 'Auto' }}
+                                </span>
 
-                                </h4>
+                                <span class="feature-badge">
+                                    ⛽ {{ car.fuelType ?: 'Petrol' }}
+                                </span>
+
+                                <span class="feature-badge">
+                                    👥 {{ car.seats ?: 5 }} Seats
+                                </span>
+
+                            </div>
+
+                            <div class="price-box">
+
+                                <div class="price">
+
+                                    {{ car.pricePerDay }} €
+
+                                    <small>/day</small>
+
+                                </div>
 
                                 {% if car.status == 'available' %}
 
-                                    <span class="badge bg-success">
+                                    <span class="status-badge available">
                                         Available
                                     </span>
 
                                 {% else %}
 
-                                    <span class="badge bg-danger">
+                                    <span class="status-badge unavailable">
                                         Unavailable
                                     </span>
 
@@ -441,55 +534,33 @@
 
                             </div>
 
-                            <div class="d-flex flex-wrap gap-2 mb-4">
-
-                                <span class="badge bg-light text-dark p-2">
-
-                                    🚘 {{ car.transmission ?: 'Auto' }}
-
-                                </span>
-
-                                <span class="badge bg-light text-dark p-2">
-
-                                    ⛽ {{ car.fuelType ?: 'Petrol' }}
-
-                                </span>
-
-                                <span class="badge bg-light text-dark p-2">
-
-                                    👥 {{ car.seats ?: 5 }} Seats
-
-                                </span>
-
-                            </div>
-
-                            <div class="d-flex justify-content-between align-items-center">
-
-                                <div>
-
-                                    <div class="fw-bold text-success"
-                                         style="font-size:1.5rem;">
-
-                                        {{ car.pricePerDay }} €
-
-                                    </div>
-
-                                    <small class="text-muted">
-                                        per day
-                                    </small>
-
-                                </div>
+                            <div class="car-buttons">
 
                                 <a href="{{ path('app_car_show', {'id': car.id}) }}"
-                                   class="hero-btn-primary"
-                                   style="
-                                       padding:12px 18px;
-                                       font-size:14px;
-                                   ">
+                                   class="btn btn-outline-dark">
 
-                                    View Details
+                                    Details
 
                                 </a>
+
+                                {% if car.status == 'available' %}
+
+                                    <a href="{{ path('app_reservation_new', {'car': car.id}) }}"
+                                       class="btn btn-success">
+
+                                        Book Now
+
+                                    </a>
+
+                                {% else %}
+
+                                    <button class="btn btn-secondary" disabled>
+
+                                        Unavailable
+
+                                    </button>
+
+                                {% endif %}
 
                             </div>
 
@@ -518,7 +589,6 @@
 
 </section>
 
-{# CTA #}
 <section class="section-modern">
 
     <div class="container">
@@ -526,16 +596,11 @@
         <div class="cta-section">
 
             <h2 class="cta-title">
-
                 Ready To Drive?
-
             </h2>
 
             <p class="cta-text">
-
-                Browse our collection of premium vehicles
-                and book your perfect ride today.
-
+                Browse our collection and reserve your perfect vehicle today.
             </p>
 
             <a href="{{ path('app_car_index') }}"
