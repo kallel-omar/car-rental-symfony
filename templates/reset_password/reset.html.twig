@@ -1,12 +1,173 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Reset your password{% endblock %}
+{% block title %}Reset Password{% endblock %}
 
 {% block body %}
-    <h1>Reset your password</h1>
 
-    {{ form_start(resetForm) }}
-        {{ form_row(resetForm.plainPassword) }}
-        <button class="btn btn-primary">Reset password</button>
-    {{ form_end(resetForm) }}
+<style>
+
+.reset-section {
+    min-height: 100vh;
+    background: #f8f9fa;
+    padding: 80px 0;
+}
+
+.reset-card {
+    background: white;
+    border: none;
+    border-radius: 28px;
+    padding: 45px;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+}
+
+.reset-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 10px;
+}
+
+.reset-subtitle {
+    color: #6b7280;
+    margin-bottom: 35px;
+}
+
+.form-label {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+.form-control {
+    border-radius: 14px;
+    padding: 14px 16px;
+    border: 1px solid #dcdfe4;
+    transition: 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.15rem rgba(25,135,84,.15);
+}
+
+.reset-btn {
+    background: #198754;
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    font-weight: 700;
+    font-size: 16px;
+    width: 100%;
+    transition: 0.2s ease;
+    color: white;
+}
+
+.reset-btn:hover {
+    background: #157347;
+}
+
+.error-box {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+.error-box ul {
+    margin-bottom: 0;
+    padding-left: 18px;
+}
+
+</style>
+
+<section class="reset-section">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-5">
+
+                <div class="reset-card">
+
+                    <h1 class="reset-title">
+
+                        Reset Password
+
+                    </h1>
+
+                    <p class="reset-subtitle">
+
+                        Enter your new secure password.
+
+                    </p>
+
+                    {{ form_start(resetForm) }}
+
+                    {# NEW PASSWORD #}
+                    <div class="mb-4">
+
+                        {{ form_label(
+                            resetForm.plainPassword.first,
+                            'New Password'
+                        ) }}
+
+                        {{ form_widget(
+                            resetForm.plainPassword.first,
+                            {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': 'Enter new password'
+                                }
+                            }
+                        ) }}
+
+                    </div>
+
+                    {# CONFIRM PASSWORD #}
+                    <div class="mb-4">
+
+                        {{ form_label(
+                            resetForm.plainPassword.second,
+                            'Confirm Password'
+                        ) }}
+
+                        {{ form_widget(
+                            resetForm.plainPassword.second,
+                            {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': 'Confirm your password'
+                                }
+                            }
+                        ) }}
+
+                    </div>
+
+                    {# ERRORS #}
+                    <div class="error-box mb-3">
+
+                        {{ form_errors(resetForm.plainPassword.first) }}
+
+                        {{ form_errors(resetForm.plainPassword.second) }}
+
+                    </div>
+
+                    <button class="reset-btn">
+
+                        Reset Password
+
+                    </button>
+
+                    {{ form_end(resetForm) }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
 {% endblock %}

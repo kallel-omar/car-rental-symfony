@@ -3,21 +3,219 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
 
-    <h1>Register</h1>
+<style>
 
-    {{ form_errors(registrationForm) }}
+.register-section {
+    min-height: 100vh;
+    background: #f8f9fa;
+    padding: 80px 0;
+}
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+.register-card {
+    background: white;
+    border: none;
+    border-radius: 28px;
+    padding: 45px;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+}
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+.register-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 10px;
+}
+
+.register-subtitle {
+    color: #6b7280;
+    margin-bottom: 35px;
+}
+
+.form-label {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+.form-control {
+    border-radius: 14px;
+    padding: 14px 16px;
+    border: 1px solid #dcdfe4;
+    transition: 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.15rem rgba(25,135,84,.15);
+}
+
+.form-check-input {
+    margin-top: 0.25rem;
+}
+
+.register-btn {
+    background: #198754;
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    font-weight: 700;
+    font-size: 16px;
+    width: 100%;
+    transition: 0.2s ease;
+}
+
+.register-btn:hover {
+    background: #157347;
+}
+
+.error-box {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+.error-box ul {
+    margin-bottom: 0;
+    padding-left: 18px;
+}
+
+</style>
+
+<section class="register-section">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-6">
+
+                <div class="register-card">
+
+                    {% for flash_error in app.flashes('verify_email_error') %}
+
+                        <div class="alert alert-danger">
+
+                            {{ flash_error }}
+
+                        </div>
+
+                    {% endfor %}
+
+                    <h1 class="register-title">
+
+                        Create Account
+
+                    </h1>
+
+                    <p class="register-subtitle">
+
+                        Join CarBook and reserve your car
+
+                    </p>
+
+                    {{ form_start(registrationForm) }}
+
+                    {# EMAIL #}
+                    <div class="mb-4">
+
+                        {{ form_label(registrationForm.email) }}
+
+                        {{ form_widget(
+                            registrationForm.email,
+                            {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': 'Enter your email'
+                                }
+                            }
+                        ) }}
+
+                        <div class="error-box">
+
+                            {{ form_errors(registrationForm.email) }}
+
+                        </div>
+
+                    </div>
+
+                    {# PASSWORD #}
+                    <div class="mb-4">
+
+                        {{ form_label(
+                            registrationForm.plainPassword,
+                            'Password'
+                        ) }}
+
+                        {{ form_widget(
+                            registrationForm.plainPassword,
+                            {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': 'Enter your password'
+                                }
+                            }
+                        ) }}
+
+                        <div class="error-box">
+
+                            {{ form_errors(registrationForm.plainPassword) }}
+
+                        </div>
+
+                    </div>
+
+                    {# TERMS #}
+                    <div class="mb-4">
+
+                        <div class="form-check">
+
+                            {{ form_widget(
+                                registrationForm.agreeTerms,
+                                {
+                                    'attr': {
+                                        'class': 'form-check-input'
+                                    }
+                                }
+                            ) }}
+
+                            {{ form_label(
+                                registrationForm.agreeTerms,
+                                null,
+                                {
+                                    'label_attr': {
+                                        'class': 'form-check-label'
+                                    }
+                                }
+                            ) }}
+
+                        </div>
+
+                        <div class="error-box">
+
+                            {{ form_errors(registrationForm.agreeTerms) }}
+
+                        </div>
+
+                    </div>
+
+                    <button type="submit"
+                            class="register-btn">
+
+                        Register
+
+                    </button>
+
+                    {{ form_end(registrationForm) }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
 {% endblock %}

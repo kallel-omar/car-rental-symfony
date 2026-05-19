@@ -1,22 +1,175 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Reset your password{% endblock %}
+{% block title %}Forgot Password{% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('reset_password_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
-    <h1>Reset your password</h1>
 
-    {{ form_start(requestForm) }}
-        {{ form_row(requestForm.email) }}
-        <div>
-            <small>
-                Enter your email address, and we will send you a
-                link to reset your password.
-            </small>
+<style>
+
+.reset-request-section {
+    min-height: 100vh;
+    background: #f8f9fa;
+    padding: 80px 0;
+}
+
+.reset-request-card {
+    background: white;
+    border: none;
+    border-radius: 28px;
+    padding: 45px;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+}
+
+.reset-request-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 10px;
+}
+
+.reset-request-subtitle {
+    color: #6b7280;
+    margin-bottom: 35px;
+}
+
+.form-label {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+.form-control {
+    border-radius: 14px;
+    padding: 14px 16px;
+    border: 1px solid #dcdfe4;
+    transition: 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.15rem rgba(25,135,84,.15);
+}
+
+.reset-request-btn {
+    background: #198754;
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    font-weight: 700;
+    font-size: 16px;
+    width: 100%;
+    transition: 0.2s ease;
+    color: white;
+}
+
+.reset-request-btn:hover {
+    background: #157347;
+}
+
+.info-box {
+    background: #f1f3f5;
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-size: 14px;
+    color: #495057;
+    margin-bottom: 25px;
+}
+
+.error-box {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+.error-box ul {
+    margin-bottom: 0;
+    padding-left: 18px;
+}
+
+.alert {
+    border-radius: 14px;
+}
+
+</style>
+
+<section class="reset-request-section">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-5">
+
+                <div class="reset-request-card">
+
+                    {% for flash_error in app.flashes('reset_password_error') %}
+
+                        <div class="alert alert-danger">
+
+                            {{ flash_error }}
+
+                        </div>
+
+                    {% endfor %}
+
+                    <h1 class="reset-request-title">
+
+                        Forgot Password
+
+                    </h1>
+
+                    <p class="reset-request-subtitle">
+
+                        Enter your email to receive a password reset link.
+
+                    </p>
+
+                    {{ form_start(requestForm) }}
+
+                    <div class="mb-4">
+
+                        {{ form_label(requestForm.email) }}
+
+                        {{ form_widget(
+                            requestForm.email,
+                            {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': 'Enter your email'
+                                }
+                            }
+                        ) }}
+
+                        <div class="error-box">
+
+                            {{ form_errors(requestForm.email) }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="info-box">
+
+                        We will send you a secure link to reset your password.
+
+                    </div>
+
+                    <button class="reset-request-btn">
+
+                        Send Reset Email
+
+                    </button>
+
+                    {{ form_end(requestForm) }}
+
+                </div>
+
+            </div>
+
         </div>
 
-        <button class="btn btn-primary">Send password reset email</button>
-    {{ form_end(requestForm) }}
+    </div>
+
+</section>
+
 {% endblock %}

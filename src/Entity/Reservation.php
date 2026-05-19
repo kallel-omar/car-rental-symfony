@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ReservationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Entity\User;
 use App\Entity\Car;
@@ -40,6 +41,16 @@ class Reservation
     private ?string $fullName = null;
 
     #[ORM\Column(length: 30)]
+
+    #[Assert\NotBlank(
+        message: 'Please enter your phone number.'
+    )]
+
+    #[Assert\Regex(
+        pattern: '/^[0-9]{8,15}$/',
+        message: 'Phone number must contain only numbers and be between 8 and 15 digits.'
+    )]
+
     private ?string $phoneNumber = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]

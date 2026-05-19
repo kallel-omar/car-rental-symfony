@@ -105,16 +105,7 @@ final class ReservationController extends AbstractController
         $form->handleRequest($request);
 
 
-        if ($form->isSubmitted()) {
-
-            if (!$form->isValid()) {
-
-                foreach ($form->getErrors(true) as $error) {
-                    dump($error->getMessage());
-                }
-
-                dd('FORM INVALID');
-            }
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $reservation->setUser($this->getUser());
 
@@ -532,19 +523,61 @@ final class ReservationController extends AbstractController
 
         $dompdf->render();
 
+        $pdfOutput = $dompdf->output();
+
         return new Response(
-
-            $dompdf->stream(
-                'reservation-'.$reservation->getId().'.pdf',
-                [
-                    'Attachment' => true
-                ]
-            ),
-
+            $pdfOutput,
             200,
-
             [
-                'Content-Type' => 'application/pdf'
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' =>
+                    'attachment; filename="reservation-'.$reservation->getId().'.pdf"'
+            ]
+        );
+    }
+    #[Route('/calendar', name: 'app_reservation_calendar', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function calendar(
+        ReservationRepository $reservationRepository
+    ): Response {
+
+        $reservations = $reservationRepository->findAll();
+
+        $events = [];
+
+        foreach ($reservations as $reservation) {
+
+            $events[] = [
+
+                'title' =>
+                    $reservation->getCar()->getBrand().' '.
+                    $reservation->getCar()->getModel(),
+
+                'start' =>
+                    $reservation->getStartDate()->format('Y-m-d'),
+
+                'end' =>
+                    $reservation->getEndDate()
+                        ->modify('+1 day')
+                        ->format('Y-m-d'),
+
+                'color' => match ($reservation->getStatus()) {
+
+                    'approved' => '#198754',
+                    'pending' => '#ffc107',
+                    'completed' => '#0d6efd',
+                    'rejected' => '#dc3545',
+
+                    default => '#6c757d'
+                }
+
+            ];
+        }
+
+        return $this->render(
+            'reservation/calendar.html.twig',
+            [
+                'events' => json_encode($events),
             ]
         );
     }

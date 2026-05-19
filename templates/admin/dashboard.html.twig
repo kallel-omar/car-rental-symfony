@@ -6,40 +6,36 @@
 
 <style>
 
-.dashboard-header {
-    margin-bottom: 40px;
+.custom-table th,
+.custom-table td {
+    padding: 18px 22px !important;
+    vertical-align: middle;
 }
 
-.dashboard-title {
-    font-size: 2.4rem;
-    font-weight: 800;
-    color: #111827;
+.custom-table thead th {
+    white-space: nowrap;
 }
 
-.dashboard-subtitle {
-    color: #6b7280;
-    margin-top: 8px;
+.custom-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: 0.2s;
 }
 
-.stat-card {
-    background: white;
-    border-radius: 24px;
-    padding: 30px;
-    height: 100%;
+.dashboard-card {
+    border: none;
+    border-radius: 18px;
     box-shadow: 0 6px 24px rgba(0,0,0,0.06);
-    transition: 0.3s ease;
-    border: 1px solid rgba(0,0,0,0.04);
+    transition: 0.3s;
 }
 
-.stat-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 14px 35px rgba(0,0,0,0.08);
+.dashboard-card:hover {
+    transform: translateY(-4px);
 }
 
 .stat-icon {
-    width: 70px;
-    height: 70px;
-    border-radius: 20px;
+    width: 65px;
+    height: 65px;
+    border-radius: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -48,148 +44,141 @@
 }
 
 .bg-cars {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    background: #0d6efd;
 }
 
 .bg-reservations {
-    background: linear-gradient(135deg, #10b981, #059669);
+    background: #198754;
 }
 
 .bg-revenue {
-    background: linear-gradient(135deg, #111827, #374151);
-}
-
-.stat-label {
-    color: #6b7280;
-    font-weight: 600;
-    margin-bottom: 10px;
+    background: #111827;
 }
 
 .stat-number {
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: 800;
-    color: #111827;
 }
 
-.section-card {
-    background: white;
-    border-radius: 28px;
-    padding: 35px;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.06);
-    margin-top: 40px;
-}
-
-.section-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 25px;
-    color: #111827;
-}
-
-.custom-table thead th {
-    border: none;
-    color: #6b7280;
-    font-size: 14px;
-    font-weight: 700;
-    padding-bottom: 18px;
-}
-
-.custom-table tbody td {
-    border-top: 1px solid #f1f3f5;
-    padding: 18px 0;
-    vertical-align: middle;
-    font-weight: 500;
-}
-
-.price-text {
-    color: #10b981;
-    font-weight: 700;
-}
-
-.quick-actions {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-}
-
-.action-btn {
-    padding: 14px 24px;
-    border-radius: 16px;
-    text-decoration: none;
-    font-weight: 700;
-    transition: 0.25s ease;
-}
-
-.action-primary {
-    background: #111827;
-    color: white;
-}
-
-.action-primary:hover {
-    background: #000;
-    color: white;
-}
-
-.action-success {
-    background: #198754;
-    color: white;
-}
-
-.action-success:hover {
-    background: #157347;
-    color: white;
+.quick-btn {
+    border-radius: 50px;
+    padding: 12px 24px;
+    font-weight: 600;
 }
 
 .chart-container {
-    height: 380px;
+    height: 350px;
 }
 
 </style>
 
-<div class="dashboard-header">
+<div class="container py-5">
 
-    <h1 class="dashboard-title">
+    {# HEADER #}
+    <div class="mb-5">
 
-        Admin Dashboard
+        <h1 class="fw-bold mb-1">
+            Dashboard
+        </h1>
 
-    </h1>
+        <p class="text-muted mb-0">
+            Manage your platform analytics and activity
+        </p>
 
-    <p class="dashboard-subtitle">
+    </div>
 
-        Welcome back — manage your cars, reservations and analytics.
+    {# STATS #}
+    <div class="row g-4 mb-4">
 
-    </p>
+        <div class="col-lg-4">
 
-</div>
+            <div class="card dashboard-card">
 
-<div class="row g-4">
+                <div class="card-body p-4">
 
-    {# CARS #}
-    <div class="col-lg-4">
+                    <div class="d-flex justify-content-between align-items-center">
 
-        <div class="stat-card">
+                        <div>
 
-            <div class="d-flex justify-content-between align-items-center">
+                            <div class="text-muted fw-semibold mb-2">
+                                Total Cars
+                            </div>
 
-                <div>
+                            <div class="stat-number">
+                                {{ carsCount }}
+                            </div>
 
-                    <div class="stat-label">
+                        </div>
 
-                        Total Cars
-
-                    </div>
-
-                    <div class="stat-number">
-
-                        {{ carsCount }}
+                        <div class="stat-icon bg-cars">
+                            🚘
+                        </div>
 
                     </div>
 
                 </div>
 
-                <div class="stat-icon bg-cars">
+            </div>
 
-                    🚘
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="card dashboard-card">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <div class="text-muted fw-semibold mb-2">
+                                Reservations
+                            </div>
+
+                            <div class="stat-number">
+                                {{ reservationsCount }}
+                            </div>
+
+                        </div>
+
+                        <div class="stat-icon bg-reservations">
+                            📅
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="card dashboard-card">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <div class="text-muted fw-semibold mb-2">
+                                Revenue
+                            </div>
+
+                            <div class="stat-number">
+                                {{ totalRevenue }} €
+                            </div>
+
+                        </div>
+
+                        <div class="stat-icon bg-revenue">
+                            💰
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -199,34 +188,138 @@
 
     </div>
 
-    {# RESERVATIONS #}
-    <div class="col-lg-4">
 
-        <div class="stat-card">
 
-            <div class="d-flex justify-content-between align-items-center">
+    {# LATEST RESERVATIONS #}
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
 
                 <div>
 
-                    <div class="stat-label">
+                    <h4 class="fw-bold mb-1">
+                        Latest Reservations
+                    </h4>
 
-                        Reservations
-
-                    </div>
-
-                    <div class="stat-number">
-
-                        {{ reservationsCount }}
-
-                    </div>
+                    <p class="text-muted mb-0">
+                        Recent customer reservations
+                    </p>
 
                 </div>
 
-                <div class="stat-icon bg-reservations">
+            </div>
 
-                    📅
+            <div class="table-responsive">
 
-                </div>
+                <table class="table table-hover align-middle mb-0 custom-table">
+
+                    <thead class="table-dark">
+
+                        <tr>
+
+
+                            <th>Client</th>
+                            <th>Client Phone </th>
+                            <th>Car</th>
+                            <th>Period</th>
+                            <th>Status</th>
+                            <th>Total</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    {% for r in reservations %}
+
+                        <tr
+                            onclick="window.location='{{ path('app_reservation_show', {'id': r.id}) }}'"
+                            style="cursor:pointer;"
+                        >
+
+                            <td>
+                                {{ r.fullName }}
+                            </td>
+
+                            <td>
+                                {{ r.phoneNumber }}
+                            </td>
+
+                            <td>
+
+                                <div class="fw-semibold">
+                                    {{ r.car.brand }}
+                                    {{ r.car.model }}
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <div>
+                                    <strong>From:</strong>
+
+                                    {{ r.startDate
+                                        ? r.startDate|date('d M Y')
+                                        : ''
+                                    }}
+                                </div>
+
+                                <div>
+                                    <strong>To:</strong>
+
+                                    {{ r.endDate
+                                        ? r.endDate|date('d M Y')
+                                        : ''
+                                    }}
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                {% if r.status == 'pending' %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Pending
+                                    </span>
+
+                                {% elseif r.status == 'approved' %}
+
+                                    <span class="badge bg-success">
+                                        Approved
+                                    </span>
+
+                                {% elseif r.status == 'completed' %}
+
+                                    <span class="badge bg-primary">
+                                        Completed
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+                                        Rejected
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td class="fw-bold text-success">
+                                {{ r.totalPrice }} €
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
 
             </div>
 
@@ -234,246 +327,11 @@
 
     </div>
 
-    {# REVENUE #}
-    <div class="col-lg-4">
 
-        <div class="stat-card">
 
-            <div class="d-flex justify-content-between align-items-center">
-
-                <div>
-
-                    <div class="stat-label">
-
-                        Total Revenue
-
-                    </div>
-
-                    <div class="stat-number">
-
-                        {{ totalRevenue }} €
-
-                    </div>
-
-                </div>
-
-                <div class="stat-icon bg-revenue">
-
-                    💰
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-{# QUICK ACTIONS #}
-<div class="section-card">
-
-    <h3 class="section-title">
-
-        Quick Actions
-
-    </h3>
-
-    <div class="quick-actions">
-
-        <a href="{{ path('admin_cars') }}"
-           class="action-btn action-primary">
-
-            Manage Cars
-
-        </a>
-
-        <a href="{{ path('app_car_new') }}"
-           class="action-btn action-success">
-
-            Add New Car
-
-        </a>
-
-        <a href="{{ path('app_reservation_index') }}"
-           class="action-btn action-primary">
-
-            Reservations
-
-        </a>
-
-    </div>
-
-</div>
-
-{# LATEST RESERVATIONS #}
-<div class="section-card">
-
-    <h3 class="section-title">
-
-        Latest Reservations
-
-    </h3>
-
-    <div class="table-responsive">
-
-        <table class="table custom-table">
-
-            <thead>
-
-                <tr>
-
-                    <th>ID</th>
-                    <th>User</th>
-                    <th>Car</th>
-                    <th>Status</th>
-                    <th>Total</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                {% for r in reservations %}
-
-                    <tr>
-
-                        <td>
-                            #{{ r.id }}
-                        </td>
-
-                        <td>
-                            {{ r.user.email }}
-                        </td>
-
-                        <td>
-                            {{ r.car.brand }}
-                            {{ r.car.model }}
-                        </td>
-
-                        <td>
-
-                            {% if r.status == 'pending' %}
-
-                                <span class="badge bg-warning text-dark">
-                                    Pending
-                                </span>
-
-                            {% elseif r.status == 'approved' %}
-
-                                <span class="badge bg-success">
-                                    Approved
-                                </span>
-
-                            {% elseif r.status == 'completed' %}
-
-                                <span class="badge bg-primary">
-                                    Completed
-                                </span>
-
-                            {% else %}
-
-                                <span class="badge bg-danger">
-                                    Rejected
-                                </span>
-
-                            {% endif %}
-
-                        </td>
-
-                        <td class="price-text">
-
-                            {{ r.totalPrice }} €
-
-                        </td>
-
-                    </tr>
-
-                {% endfor %}
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-</div>
-
-{# CHART #}
-<div class="section-card">
-
-    <h3 class="section-title">
-
-        Revenue Analytics
-
-    </h3>
-
-    <div class="chart-container">
-
-        <canvas id="revenueChart"></canvas>
-
-    </div>
-
-</div>
 
 {% endblock %}
 
-{% block javascripts %}
 
-{{ parent() }}
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-
-const ctx = document.getElementById('revenueChart');
-
-new Chart(ctx, {
-
-    type: 'line',
-
-    data: {
-
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-
-        datasets: [{
-
-            label: 'Revenue (€)',
-
-            data: [1200, 1900, 800, 2100, 1700, 2500],
-
-            tension: 0.4,
-
-            fill: true
-
-        }]
-    },
-
-    options: {
-
-        responsive: true,
-
-        maintainAspectRatio: false,
-
-        plugins: {
-
-            legend: {
-                display: true
-            }
-        },
-
-        scales: {
-
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
-
-</script>
-
-{% endblock %}
 

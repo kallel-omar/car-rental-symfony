@@ -1,38 +1,211 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}Login{% endblock %}
 
 {% block body %}
-<form method="post">
-    {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
 
-    {% if app.user %}
-        <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ logout_path() }}">Logout</a>
+<style>
+
+.login-section {
+    min-height: 100vh;
+    background: #f8f9fa;
+    padding: 80px 0;
+}
+
+.login-card {
+    background: white;
+    border: none;
+    border-radius: 28px;
+    padding: 45px;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+}
+
+.login-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 10px;
+}
+
+.login-subtitle {
+    color: #6b7280;
+    margin-bottom: 35px;
+}
+
+.form-label {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+.form-control {
+    border-radius: 14px;
+    padding: 14px 16px;
+    border: 1px solid #dcdfe4;
+    transition: 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.15rem rgba(25,135,84,.15);
+}
+
+.login-btn {
+    background: #198754;
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    font-weight: 700;
+    font-size: 16px;
+    width: 100%;
+    transition: 0.2s ease;
+    color: white;
+}
+
+.login-btn:hover {
+    background: #157347;
+}
+
+.forgot-link {
+    color: #198754;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.forgot-link:hover {
+    text-decoration: underline;
+}
+
+.alert {
+    border-radius: 14px;
+}
+
+</style>
+
+<section class="login-section">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-5">
+
+                <div class="login-card">
+
+                    {% if error %}
+
+                        <div class="alert alert-danger">
+
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
+
+                        </div>
+
+                    {% endif %}
+
+                    {% if app.user %}
+
+                        <div class="alert alert-success">
+
+                            You are logged in as
+                            <strong>{{ app.user.userIdentifier }}</strong>
+
+                        </div>
+
+                    {% endif %}
+
+                    <h1 class="login-title">
+
+                        Welcome Back
+
+                    </h1>
+
+                    <p class="login-subtitle">
+
+                        Login to continue your journey with CarBook.
+
+                    </p>
+
+                    <form method="post">
+
+                        {# EMAIL #}
+                        <div class="mb-4">
+
+                            <label for="inputEmail"
+                                   class="form-label">
+
+                                Email Address
+
+                            </label>
+
+                            <input
+                                type="email"
+                                value="{{ last_username }}"
+                                name="email"
+                                id="inputEmail"
+                                class="form-control"
+                                autocomplete="email"
+                                placeholder="Enter your email"
+                                required
+                                autofocus>
+
+                        </div>
+
+                        {# PASSWORD #}
+                        <div class="mb-4">
+
+                            <label for="inputPassword"
+                                   class="form-label">
+
+                                Password
+
+                            </label>
+
+                            <input
+                                type="password"
+                                name="password"
+                                id="inputPassword"
+                                class="form-control"
+                                autocomplete="current-password"
+                                placeholder="Enter your password"
+                                required>
+
+                        </div>
+
+                        <input
+                            type="hidden"
+                            name="_csrf_token"
+                            value="{{ csrf_token('authenticate') }}">
+
+                        {# LOGIN BUTTON #}
+                        <button class="login-btn"
+                                type="submit">
+
+                            Login
+
+                        </button>
+
+                        {# FORGOT PASSWORD #}
+                        <div class="text-center mt-4">
+
+                            <a href="{{ path('app_forgot_password_request') }}"
+                               class="forgot-link">
+
+                                Forgot your password?
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
         </div>
-    {% endif %}
 
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <label for="inputEmail">Email</label>
-    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
-    <label for="inputPassword">Password</label>
-    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-    <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+    </div>
 
-    <button class="btn btn-lg btn-primary" type="submit">
-        Sign in
-    </button>
-<div class="text-center mt-3">
+</section>
 
-    <a href="{{ path('app_forgot_password_request') }}"
-       class="text-decoration-none">
-
-        Forgot your password?
-
-    </a>
-
-</div>
-</form>
 {% endblock %}

@@ -1,77 +1,360 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Reservation{% endblock %}
+{% block title %}Reserve Your Car{% endblock %}
 
 {% block body %}
 
-<div class="container mt-5">
+<style>
 
-    <div class="card shadow-sm p-4">
+body {
+    background: #f8f9fa;
+}
 
-        <h3 class="mb-4">Reservation Details</h3>
+.reservation-hero {
+    background: linear-gradient(135deg, #111827, #1f2937);
+    border-radius: 0 0 40px 40px;
+    padding: 90px 0 140px;
+    position: relative;
+    overflow: hidden;
+}
 
-        {{ form_start(form, {
-            'attr': {
-                'enctype': 'multipart/form-data'
-            }
-        }) }}
+.reservation-hero::before {
+    content: "";
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+    top: -120px;
+    right: -120px;
+}
 
-        <div class="mb-3">
-            {{ form_label(form.car) }}
-            {{ form_widget(form.car, {'attr': {'class': 'form-select'}}) }}
-            {{ form_errors(form.car) }}
-        </div>
+.hero-title {
+    color: white;
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
 
-        <div class="mb-3">
-            {{ form_label(form.fullName) }}
-            {{ form_widget(form.fullName, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.fullName) }}
-        </div>
+.hero-subtitle {
+    color: rgba(255,255,255,0.7);
+    font-size: 17px;
+}
 
-        <div class="mb-3">
-            {{ form_label(form.phoneNumber) }}
-            {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.phoneNumber) }}
-        </div>
+.reservation-wrapper {
+    margin-top: -80px;
+    position: relative;
+    z-index: 10;
+}
 
-        <div class="mb-3">
-            {{ form_label(form.startDate) }}
-            {{ form_widget(form.startDate, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.startDate) }}
-        </div>
+.reservation-card {
+    background: white;
+    border-radius: 32px;
+    padding: 45px;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.03);
+}
 
-        <div class="mb-3">
-            {{ form_label(form.endDate) }}
-            {{ form_widget(form.endDate, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.endDate) }}
-        </div>
+.section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 30px;
+}
 
-        <div class="mb-3">
-            {{ form_label(form.licenseIssueDate) }}
-            {{ form_widget(form.licenseIssueDate, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.licenseIssueDate) }}
-        </div>
+.form-label {
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 12px;
+}
 
-        <div class="mb-3">
-            {{ form_label(form.cinImage) }}
-            {{ form_widget(form.cinImage, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.cinImage) }}
-        </div>
+.form-control,
+.form-select {
+    border-radius: 18px;
+    border: 1px solid #e5e7eb;
+    padding: 16px 18px;
+    font-size: 15px;
+    transition: 0.25s ease;
+    background: #fcfcfc;
+}
 
-        <div class="mb-3">
-            {{ form_label(form.licenseImage) }}
-            {{ form_widget(form.licenseImage, {'attr': {'class': 'form-control'}}) }}
-            {{ form_errors(form.licenseImage) }}
-        </div>
+.form-control:focus,
+.form-select:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.18rem rgba(25,135,84,.12);
+    background: white;
+}
 
-        <button type="submit" class="btn btn-success w-100 mt-3">
-            🚗 Confirm Reservation
-        </button>
+.upload-box {
+    border: 2px dashed #d1d5db;
+    border-radius: 20px;
+    padding: 22px;
+    background: #fafafa;
+}
 
-        {{ form_end(form) }}
+.info-alert {
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    border-radius: 20px;
+    padding: 18px 22px;
+    color: #065f46;
+    font-weight: 600;
+    margin-top: 20px;
+}
+
+.reservation-btn {
+    background: linear-gradient(135deg, #198754, #157347);
+    border: none;
+    border-radius: 18px;
+    padding: 16px;
+    font-size: 17px;
+    font-weight: 700;
+    color: white;
+    width: 100%;
+    transition: 0.25s ease;
+}
+
+.reservation-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(25,135,84,0.25);
+}
+
+.error-box {
+    color: #dc3545;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.error-box ul {
+    margin-bottom: 0;
+    padding-left: 18px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+@media(max-width: 768px) {
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .reservation-card {
+        padding: 28px;
+    }
+
+    .hero-title {
+        font-size: 2.2rem;
+    }
+}
+
+</style>
+
+<section class="reservation-hero">
+
+    <div class="container">
+
+        <h1 class="hero-title">
+
+            Reserve Your Dream Car
+
+        </h1>
+
+        <p class="hero-subtitle">
+
+            Fast, secure and professional reservation experience.
+
+        </p>
 
     </div>
 
-</div>
+</section>
+
+<section class="reservation-wrapper">
+
+    <div class="container">
+
+        <div class="reservation-card">
+
+            <h2 class="section-title">
+
+                Reservation Details
+
+            </h2>
+
+            {{ form_start(form, {
+                'attr': {
+                    'enctype': 'multipart/form-data'
+                }
+            }) }}
+
+            <div class="form-grid">
+
+                <div>
+
+                    {{ form_label(form.car) }}
+
+                    {{ form_widget(form.car, {
+                        'attr': {
+                            'class': 'form-select'
+                        }
+                    }) }}
+
+                    <div class="error-box">
+                        {{ form_errors(form.car) }}
+                    </div>
+
+                </div>
+
+                <div>
+
+                    {{ form_label(form.fullName) }}
+
+                    {{ form_widget(form.fullName, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Enter your full name'
+                        }
+                    }) }}
+
+                    <div class="error-box">
+                        {{ form_errors(form.fullName) }}
+                    </div>
+
+                </div>
+
+                <div>
+
+                    {{ form_label(form.phoneNumber, 'Phone Number') }}
+
+                    {{ form_widget(form.phoneNumber, {
+                        'attr': {
+                            'class': 'form-control',
+                            'id': 'phone'
+                        }
+                    }) }}
+
+                    <div class="error-box">
+                        {{ form_errors(form.phoneNumber) }}
+                    </div>
+
+                </div>
+
+                <div>
+
+                    {{ form_label(form.licenseIssueDate) }}
+
+                    {{ form_widget(form.licenseIssueDate, {
+                        'attr': {
+                            'class': 'form-control'
+                        }
+                    }) }}
+
+                    <div class="error-box">
+                        {{ form_errors(form.licenseIssueDate) }}
+                    </div>
+
+                </div>
+
+                <div>
+
+                    {{ form_label(form.startDate) }}
+
+                    {{ form_widget(form.startDate, {
+                        'attr': {
+                            'class': 'form-control'
+                        }
+                    }) }}
+
+                    <div class="error-box">
+                        {{ form_errors(form.startDate) }}
+                    </div>
+
+                </div>
+
+                <div>
+
+                    {{ form_label(form.endDate) }}
+
+                    {{ form_widget(form.endDate, {
+                        'attr': {
+                            'class': 'form-control'
+                        }
+                    }) }}
+
+                    <div class="error-box">
+                        {{ form_errors(form.endDate) }}
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row mt-4">
+
+                <div class="col-lg-6 mb-4">
+
+                    <div class="upload-box">
+
+                        {{ form_label(form.cinImage, 'CIN Image') }}
+
+                        {{ form_widget(form.cinImage, {
+                            'attr': {
+                                'class': 'form-control'
+                            }
+                        }) }}
+
+                        <div class="error-box">
+                            {{ form_errors(form.cinImage) }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg-6 mb-4">
+
+                    <div class="upload-box">
+
+                        {{ form_label(form.licenseImage, 'Driver License Image') }}
+
+                        {{ form_widget(form.licenseImage, {
+                            'attr': {
+                                'class': 'form-control'
+                            }
+                        }) }}
+
+                        <div class="error-box">
+                            {{ form_errors(form.licenseImage) }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="info-alert">
+
+                🚘 Driver license must be older than 2 years.
+
+            </div>
+
+            <button type="submit"
+                    class="reservation-btn mt-4">
+
+                Confirm Reservation
+
+            </button>
+
+            {{ form_end(form) }}
+
+        </div>
+
+    </div>
+
+</section>
 
 {% endblock %}

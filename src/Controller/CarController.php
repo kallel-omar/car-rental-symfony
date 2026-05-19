@@ -37,6 +37,8 @@ final class CarController extends AbstractController
 
         $available = $request->query->get('available');
 
+        $seats = $request->query->get('seats');
+
         $qb = $carRepository->createQueryBuilder('c');
 
         // SEARCH
@@ -66,12 +68,18 @@ final class CarController extends AbstractController
             $qb->andWhere('c.status = :status')
                 ->setParameter('status', 'available');
         }
+        // SEATS
+        if ($seats) {
+            $qb->andWhere('c.seats = :seats')
+                ->setParameter('seats', $seats);
+        }
 
         $cars = $qb->getQuery()->getResult();
 
         return $this->render('car/index.html.twig', [
             'cars' => $cars,
         ]);
+
     }
 
     #[Route('/new', name: 'app_car_new', methods: ['GET', 'POST'])]

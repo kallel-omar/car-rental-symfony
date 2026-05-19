@@ -24,9 +24,10 @@ class AdminController extends AbstractController
         $reservationsCount = $reservationRepository->count([]);
 
         $reservations = $reservationRepository->findBy([], ['id' => 'DESC'], 5);
-
         $totalRevenue = $reservationRepository->createQueryBuilder('r')
             ->select('SUM(r.totalPrice)')
+            ->where('r.status = :status')
+            ->setParameter('status', 'completed')
             ->getQuery()
             ->getSingleScalarResult() ?? 0;
 
