@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ReservationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+
 use App\Entity\User;
 use App\Entity\Car;
 
@@ -22,6 +23,14 @@ class Reservation
 
     #[ORM\Column(length: 20)]
     private ?string $status = 'pending';
+
+    // PAYMENT METHOD
+    #[ORM\Column(length: 50)]
+    private ?string $paymentMethod = 'cash';
+
+    // PAYMENT STATUS
+    #[ORM\Column(length: 50)]
+    private ?string $paymentStatus = 'unpaid';
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
@@ -76,6 +85,32 @@ class Reservation
     public function setStatus(string $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    // PAYMENT METHOD
+    public function getPaymentMethod(): ?string
+    {
+        return $this->paymentMethod;
+    }
+
+    public function setPaymentMethod(string $paymentMethod): static
+    {
+        $this->paymentMethod = $paymentMethod;
+
+        return $this;
+    }
+
+    // PAYMENT STATUS
+    public function getPaymentStatus(): ?string
+    {
+        return $this->paymentStatus;
+    }
+
+    public function setPaymentStatus(string $paymentStatus): static
+    {
+        $this->paymentStatus = $paymentStatus;
 
         return $this;
     }

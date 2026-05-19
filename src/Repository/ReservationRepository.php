@@ -35,9 +35,19 @@ class ReservationRepository extends ServiceEntityRepository
         $qb->where('r.car = :car')
             ->andWhere('r.startDate <= :endDate')
             ->andWhere('r.endDate >= :startDate')
+
+            // ONLY ACTIVE RESERVATIONS
+            ->andWhere('r.status IN (:statuses)')
+
             ->setParameter('car', $car)
             ->setParameter('startDate', $startDate)
-            ->setParameter('endDate', $endDate);
+            ->setParameter('endDate', $endDate)
+
+            // BLOCK ONLY THESE
+            ->setParameter('statuses', [
+                'pending',
+                'approved'
+            ]);
 
         return count($qb->getQuery()->getResult()) > 0;
     }

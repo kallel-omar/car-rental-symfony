@@ -35,15 +35,30 @@ final class ReservationController extends AbstractController
     #[Route(name: 'app_reservation_index', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function index(
+        Request $request,
         ReservationRepository $reservationRepository
     ): Response {
 
-        return $this->render('reservation/index.html.twig', [
+        $status = $request->query->get('status');
 
-            'reservations' => $reservationRepository->findBy([
-                'status' => ['pending', 'approved']
-            ]),
-        ]);
+        $criteria = [];
+
+        if ($status) {
+
+            $criteria['status'] = $status;
+        }
+
+        $reservations = $reservationRepository->findBy(
+            $criteria,
+            ['id' => 'DESC']
+        );
+
+        return $this->render(
+            'reservation/index.html.twig',
+            [
+                'reservations' => $reservations,
+            ]
+        );
     }
 
     #[Route('/new', name: 'app_reservation_new', methods: ['GET', 'POST'])]
@@ -57,7 +72,6 @@ final class ReservationController extends AbstractController
 
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        // EMAIL VERIFICATION CHECK
         if (!$this->getUser()->isVerified()) {
 
             $this->addFlash(
@@ -90,7 +104,17 @@ final class ReservationController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+
+        if ($form->isSubmitted()) {
+
+            if (!$form->isValid()) {
+
+                foreach ($form->getErrors(true) as $error) {
+                    dump($error->getMessage());
+                }
+
+                dd('FORM INVALID');
+            }
 
             $reservation->setUser($this->getUser());
 
@@ -246,6 +270,11 @@ final class ReservationController extends AbstractController
             // DEFAULT STATUS
             $reservation->setStatus('pending');
 
+            // PAYMENT
+            $reservation->setPaymentMethod('cash');
+
+            $reservation->setPaymentStatus('unpaid');
+
             // SAVE
             $entityManager->persist($reservation);
 
@@ -289,6 +318,7 @@ final class ReservationController extends AbstractController
             ]
         );
     }
+
     #[Route('/{id}', name: 'app_reservation_show', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function show(
@@ -303,6 +333,43 @@ final class ReservationController extends AbstractController
         );
     }
 
+    #[Route('/{id}/confirm-payment', name: 'app_reservation_confirm_payment', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function confirmPayment(
+        Reservation $reservation,
+        EntityManagerInterface $entityManager,
+        MailerInterface $mailer
+    ): Response {
+
+        $reservation->setPaymentStatus('paid');
+
+        $entityManager->flush();
+
+        $email = (new Email())
+            ->from('noreply@carbook.com')
+            ->to($reservation->getUser()->getEmail())
+            ->subject('Payment Confirmed')
+            ->html('
+                <h2>Your cash payment has been confirmed 💵</h2>
+
+                <p>
+                    Your reservation payment was confirmed successfully.
+                </p>
+            ');
+
+        $mailer->send($email);
+
+        $this->addFlash(
+            'success',
+            'Payment confirmed successfully.'
+        );
+
+        return $this->redirectToRoute(
+            'app_reservation_show',
+            ['id' => $reservation->getId()]
+        );
+    }
+
     #[Route('/{id}/approve', name: 'app_reservation_approve', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function approve(
@@ -311,12 +378,15 @@ final class ReservationController extends AbstractController
         MailerInterface $mailer
     ): Response {
 
+        // APPROVE RESERVATION
         $reservation->setStatus('approved');
 
+        // CAR BECOMES UNAVAILABLE
         $reservation->getCar()->setStatus('unavailable');
 
         $entityManager->flush();
 
+        // EMAIL
         $email = (new Email())
             ->from('noreply@carbook.com')
             ->to($reservation->getUser()->getEmail())
@@ -332,6 +402,10 @@ final class ReservationController extends AbstractController
                 '</strong>
                     has been approved.
                 </p>
+
+                <p>
+                    Please proceed with cash payment to receive the car.
+                </p>
             ');
 
         $mailer->send($email);
@@ -342,7 +416,8 @@ final class ReservationController extends AbstractController
         );
 
         return $this->redirectToRoute(
-            'app_reservation_index'
+            'app_reservation_show',
+            ['id' => $reservation->getId()]
         );
     }
 
@@ -388,6 +463,7 @@ final class ReservationController extends AbstractController
 
         $reservation->setStatus('completed');
 
+        // CAR AVAILABLE AGAIN
         $reservation->getCar()->setStatus('available');
 
         $entityManager->flush();

@@ -95,6 +95,30 @@
 
                             </tr>
 
+                            {# PAYMENT STATUS #}
+                            <tr>
+                                <th>Payment</th>
+
+                                <td>
+
+                                    {% if reservation.paymentStatus == 'paid' %}
+
+                                        <span class="badge bg-success">
+                                            Paid
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-warning text-dark">
+                                            Unpaid
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
                             <tr>
                                 <th>License Check</th>
 
@@ -179,7 +203,7 @@
                                   action="{{ path('app_reservation_approve', {'id': reservation.id}) }}">
 
                                 <button class="btn btn-success">
-                                    ✅ Approve
+                                    ✅ Approve Reservation
                                 </button>
 
                             </form>
@@ -195,14 +219,30 @@
 
                         {% endif %}
 
-                        {# APPROVED #}
-                        {% if reservation.status == 'approved' %}
+                        {# APPROVED + UNPAID #}
+                        {% if reservation.status == 'approved'
+                            and reservation.paymentStatus == 'unpaid' %}
+
+                            <form method="post"
+                                  action="{{ path('app_reservation_confirm_payment', {'id': reservation.id}) }}">
+
+                                <button class="btn btn-warning text-dark">
+                                    💵 Confirm Payment
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+                        {# APPROVED + PAID #}
+                        {% if reservation.status == 'approved'
+                            and reservation.paymentStatus == 'paid' %}
 
                             <form method="post"
                                   action="{{ path('app_reservation_complete', {'id': reservation.id}) }}">
 
                                 <button class="btn btn-primary">
-                                    🚗 Return Car
+                                    🏁 Complete Reservation
                                 </button>
 
                             </form>
