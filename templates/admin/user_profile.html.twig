@@ -1,0 +1,652 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block body %}
+
+<style>
+
+.admin-profile-card{
+    background:white;
+    border-radius:20px;
+    padding:35px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.05);
+}
+
+.admin-user-avatar{
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#198754,#157347);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:30px;
+    font-weight:800;
+    flex-shrink:0;
+}
+
+.admin-user-name{
+    font-size:1.8rem;
+    font-weight:800;
+    color:#111827;
+}
+
+.admin-user-email{
+    color:#6b7280;
+    margin-top:5px;
+}
+
+.admin-badge{
+    padding:8px 16px;
+    border-radius:50px;
+    font-size:12px;
+    font-weight:700;
+}
+
+.admin-stat-card{
+    background:#198754;
+    color:white;
+    border-radius:18px;
+    padding:22px;
+    text-align:center;
+    min-width:220px;
+}
+
+.admin-stat-number{
+    font-size:2rem;
+    font-weight:800;
+}
+
+.admin-stat-label{
+    opacity:0.85;
+}
+
+.info-card{
+    background:#f8f9fa;
+    border-radius:18px;
+    padding:22px;
+    border:1px solid #e9ecef;
+    height:100%;
+}
+
+.info-label{
+    color:#6b7280;
+    font-size:14px;
+    margin-bottom:6px;
+}
+
+.info-value{
+    font-size:1.05rem;
+    font-weight:700;
+    color:#111827;
+}
+
+.document-card{
+    background:#f8f9fa;
+    border-radius:18px;
+    padding:22px;
+    border:1px solid #e9ecef;
+}
+
+.document-title{
+    font-size:1rem;
+    font-weight:700;
+    margin-bottom:16px;
+}
+
+.document-image{
+    width:100%;
+    max-height:250px;
+    object-fit:contain;
+    border-radius:14px;
+    background:white;
+    border:1px solid #dee2e6;
+    padding:10px;
+}
+
+.section-title{
+    font-size:1.3rem;
+    font-weight:800;
+    color:#111827;
+}
+
+.reservation-card{
+    background:#f8f9fa;
+    border-radius:18px;
+    padding:18px;
+    border:1px solid #e9ecef;
+    transition:0.25s ease;
+}
+
+.reservation-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(0,0,0,0.05);
+}
+
+.car-image{
+    width:110px;
+    height:75px;
+    object-fit:cover;
+    border-radius:14px;
+}
+.status-badge{
+    padding:8px 16px;
+    border-radius:50px;
+    font-size:12px;
+    font-weight:700;
+}
+.status-badge.completed{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.status-badge.approved{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status-badge.pending{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status-badge.rejected{
+    background:#fee2e2;
+    color:#991b1b;
+}
+status-badge.paid{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status-badge.unpaid{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+@media(max-width:768px){
+
+    .admin-profile-card{
+        padding:24px;
+    }
+
+    .admin-user-name{
+        font-size:1.5rem;
+    }
+
+    .admin-stat-card{
+        width:100%;
+        margin-top:20px;
+    }
+
+}
+
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2 class="fw-bold mb-1">
+
+            User Profile
+
+        </h2>
+
+        <p class="text-muted mb-0">
+
+            Customer account overview
+
+        </p>
+
+    </div>
+
+    <a href="{{ path('app_user_index') }}"
+       class="btn btn-dark rounded-pill px-4">
+
+        Back
+
+    </a>
+
+</div>
+
+<div class="admin-profile-card">
+
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-5">
+
+        <div class="d-flex align-items-center">
+
+            <div class="admin-user-avatar mr-4">
+
+                {{ userData.email|first|upper }}
+
+            </div>
+
+            <div>
+
+                <div class="d-flex align-items-center flex-wrap mb-2">
+
+                    <div class="admin-user-name mr-3">
+
+                        {{ userData.fullName ?: 'Customer Account' }}
+
+                    </div>
+
+                    {% if 'ROLE_SUPERVISER' in userData.roles %}
+
+                        <span class="badge badge-warning admin-badge mr-2">
+
+                            Superviser
+
+                        </span>
+
+                    {% elseif 'ROLE_ADMIN' in userData.roles %}
+
+                        <span class="badge badge-dark admin-badge mr-2">
+
+                            Admin
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge badge-success admin-badge mr-2">
+
+                            User
+
+                        </span>
+
+                    {% endif %}
+
+                    {% if userData.isVerified %}
+
+                        <span class="badge badge-info admin-badge">
+
+                            Verified
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge badge-danger admin-badge">
+
+                            Not Verified
+
+                        </span>
+
+                    {% endif %}
+                    <div class="mt-4">
+
+                        {% if userData.isBlocked %}
+
+                            <a href="{{ path('app_admin_unblock_user', {'id': userData.id}) }}"
+                               class="btn btn-success rounded-pill px-4">
+
+                                Unblock User
+
+                            </a>
+
+                        {% else %}
+
+                            <a href="{{ path('app_admin_block_user', {'id': userData.id}) }}"
+                               class="btn btn-danger rounded-pill px-4">
+
+                                Block User
+
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div class="admin-user-email">
+
+                    {{ userData.email }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="mt-4 mt-lg-0">
+
+            <div class="admin-stat-card">
+
+                <div class="admin-stat-number">
+
+                    {{ userData.reservations|length }}
+
+                </div>
+
+                <div class="admin-stat-label">
+
+                    Reservations
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-4 mb-4">
+
+            <div class="info-card">
+
+                <div class="info-label">
+
+                    Phone Number
+
+                </div>
+
+                <div class="info-value">
+
+                    {{ userData.phoneNumber ?: 'Not provided' }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4 mb-4">
+
+            <div class="info-card">
+
+                <div class="info-label">
+
+                    Driver License Date
+
+                </div>
+
+                <div class="info-value">
+
+                    {{ userData.licenseIssueDate
+                        ? userData.licenseIssueDate|date('d M Y')
+                        : 'Not provided'
+                    }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4 mb-4">
+
+            <div class="info-card">
+
+                <div class="info-label">
+
+                    Account Status
+
+                </div>
+
+                <div class="info-value">
+
+                    {% if userData.isVerified %}
+
+                        <span class="text-success">
+
+                            ✅ Verified
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="text-danger">
+
+                            ❌ Not Verified
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row mt-2">
+
+        <div class="col-lg-6 mb-4">
+
+            <div class="document-card">
+
+                <div class="document-title">
+
+                    CIN Document
+
+                </div>
+
+                {% if userData.cinImage %}
+
+                    <img
+                        src="{{ asset('uploads/cin/' ~ userData.cinImage) }}"
+                        class="document-image"
+                    >
+
+                {% else %}
+
+                    <div class="alert alert-secondary rounded-4 mb-0">
+
+                        No CIN uploaded
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-6 mb-4">
+
+            <div class="document-card">
+
+                <div class="document-title">
+
+                    Driver License
+
+                </div>
+
+                {% if userData.licenseImage %}
+
+                    <img
+                        src="{{ asset('uploads/licenses/' ~ userData.licenseImage) }}"
+                        class="document-image"
+                    >
+
+                {% else %}
+
+                    <div class="alert alert-secondary rounded-4 mb-0">
+
+                        No license uploaded
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% if userData.reservations|length > 0 %}
+
+        <div class="mt-5">
+
+            <h4 class="section-title mb-4">
+
+                Latest Reservations
+
+            </h4>
+
+            {% for reservation in userData.reservations|slice(0,5) %}
+
+                <div class="reservation-card mb-3">
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+
+                        {# LEFT SIDE #}
+                        <div class="d-flex align-items-center">
+
+                            {% if reservation.car.image %}
+
+                                <img
+                                    src="{{ asset('uploads/cars/' ~ reservation.car.image) }}"
+                                    class="car-image"
+                                >
+
+                            {% endif %}
+
+                            <div class="ml-4">
+
+                                <h5 class="fw-bold mb-1">
+
+                                    {{ reservation.car.brand }}
+                                    {{ reservation.car.model }}
+
+                                </h5>
+
+                                <div class="text-muted small mb-2">
+
+                                    {{ reservation.startDate|date('d M Y') }}
+                                    —
+                                    {{ reservation.endDate|date('d M Y') }}
+
+                                </div>
+
+                                <div class="fw-bold text-success">
+
+                                    {{ reservation.totalPrice }} €
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        {# RIGHT SIDE #}
+                        <div class="d-flex align-items-center flex-wrap mt-3 mt-lg-0">
+
+                            {# RESERVATION STATUS #}
+                            <div class="mr-3 text-center">
+
+                                <div class="small text-muted mb-1">
+
+                                    Reservation
+
+                                </div>
+
+                                {% set status = reservation.status|lower %}
+
+                                {% if status == 'approved' %}
+
+                                    <span class="status-badge approved">
+
+                                        Approved
+
+                                    </span>
+
+                                {% elseif status in ['completed', 'paid'] %}
+
+                                    <span class="status-badge completed">
+
+                                        {{ reservation.status }}
+
+                                    </span>
+
+                                {% elseif status == 'pending' %}
+
+                                    <span class="status-badge pending">
+
+                                        Pending
+
+                                    </span>
+
+                                {% elseif status == 'rejected' %}
+
+                                    <span class="status-badge rejected">
+
+                                        Rejected
+
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                            {# PAYMENT STATUS #}
+                            <div class="mr-3 text-center">
+
+                                <div class="small text-muted mb-1">
+
+                                    Payment
+
+                                </div>
+
+                                {% if reservation.paymentStatus|lower == 'paid' %}
+
+                                    <span class="status-badge paid">
+
+                                        Paid
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="status-badge unpaid">
+
+                                        Unpaid
+
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                            {# DETAILS BUTTON #}
+                            <div class="text-center">
+
+                                <div class="small text-muted mb-1">
+
+                                    Action
+
+                                </div>
+
+                                <a href="{{ path('app_reservation_show', {'id': reservation.id}) }}"
+                                   class="btn btn-dark btn-sm rounded-pill px-3">
+
+                                    Details
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+</div>
+
+{% endblock %}

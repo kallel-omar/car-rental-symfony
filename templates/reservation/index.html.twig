@@ -38,14 +38,17 @@
 
         <a class="btn btn-success shadow-sm px-4"
            href="{{ path('app_reservation_new') }}">
+
             + New Reservation
+
         </a>
 
     </div>
 
     {# TABLE CARD #}
     <div class="card border-0 shadow-sm">
-        <div class="d-flex gap-2 flex-wrap mb-4">
+
+        <div class="d-flex gap-2 flex-wrap mb-4 p-4 pb-0">
 
             <a href="{{ path('app_reservation_index') }}"
                class="btn btn-dark">
@@ -97,13 +100,10 @@
                             <th>Customer</th>
                             <th>Phone</th>
                             <th>Car</th>
-
                             <th>Reservation Dates</th>
                             <th>License Check</th>
-
                             <th>Total</th>
                             <th>Status</th>
-
 
                         </tr>
 
@@ -115,51 +115,64 @@
 
                         <tr>
 
-
                             {# CUSTOMER #}
                             <td>
+
                                 <div class="fw-semibold">
-                                    {{ reservation.fullName }}
+
+                                    {{ reservation.user.fullName ?: 'No Name' }}
+
                                 </div>
+
                             </td>
 
                             {# PHONE #}
                             <td>
-                                {{ reservation.phoneNumber }}
+
+                                {{ reservation.user.phoneNumber ?: 'No Phone' }}
+
                             </td>
 
                             {# CAR #}
                             <td>
 
                                 <div class="fw-semibold">
+
                                     {{ reservation.car ? reservation.car.brand : 'N/A' }}
+
                                 </div>
 
                                 <small class="text-muted">
+
                                     {{ reservation.car ? reservation.car.model : '' }}
+
                                 </small>
 
                             </td>
-
-
 
                             {# RESERVATION DATES #}
                             <td>
 
                                 <div>
+
                                     <strong>From:</strong>
+
                                     {{ reservation.startDate
                                         ? reservation.startDate|date('d M Y')
                                         : ''
                                     }}
+
                                 </div>
 
                                 <div>
+
                                     <strong>To:</strong>
+
                                     {{ reservation.endDate
                                         ? reservation.endDate|date('d M Y')
                                         : ''
                                     }}
+
                                 </div>
 
                             </td>
@@ -167,20 +180,24 @@
                             {# LICENSE VALIDATION #}
                             <td>
 
-                                {% if reservation.licenseIssueDate %}
+                                {% if reservation.user.licenseIssueDate %}
 
-                                    {% set difference = date().diff(reservation.licenseIssueDate) %}
+                                    {% set difference = date().diff(reservation.user.licenseIssueDate) %}
 
                                     {% if difference.y >= 2 %}
 
                                         <span class="badge rounded-pill bg-success px-3 py-2">
+
                                             ✅ OK
+
                                         </span>
 
                                     {% else %}
 
                                         <span class="badge rounded-pill bg-danger px-3 py-2">
+
                                             ❌ Not OK
+
                                         </span>
 
                                     {% endif %}
@@ -188,73 +205,73 @@
                                 {% else %}
 
                                     <span class="badge rounded-pill bg-secondary px-3 py-2">
+
                                         N/A
+
                                     </span>
 
                                 {% endif %}
 
                             </td>
 
-
-
-
                             {# TOTAL PRICE #}
                             <td class="fw-bold text-success">
+
                                 {{ reservation.totalPrice }} €
+
                             </td>
 
-                           {# STATUS + DETAILS BUTTON #}
-                           <td>
+                            {# STATUS #}
+                            <td>
 
-                               <a
-                                   href="{{ path('app_reservation_show', {'id': reservation.id}) }}"
-                                   class="
-                                       btn btn-sm w-100
+                                <a
+                                    href="{{ path('app_reservation_show', {'id': reservation.id}) }}"
+                                    class="
+                                        btn btn-sm w-100
 
-                                       {% if reservation.status == 'pending' %}
-                                           btn-warning text-dark
+                                        {% if reservation.status == 'pending' %}
+                                            btn-warning text-dark
 
-                                       {% elseif reservation.status == 'approved' %}
-                                           btn-success
+                                        {% elseif reservation.status == 'approved' %}
+                                            btn-success
 
-                                       {% elseif reservation.status == 'rejected' %}
-                                           btn-danger
+                                        {% elseif reservation.status == 'rejected' %}
+                                            btn-danger
 
-                                       {% elseif reservation.status == 'completed' %}
-                                           btn-primary
+                                        {% elseif reservation.status == 'completed' %}
+                                            btn-primary
 
-                                       {% else %}
-                                           btn-secondary
-                                       {% endif %}
-                                   "
-                               >
+                                        {% else %}
+                                            btn-secondary
+                                        {% endif %}
+                                    "
+                                >
 
-                                   {% if reservation.status == 'pending' %}
+                                    {% if reservation.status == 'pending' %}
 
-                                       Pending
+                                        Pending
 
-                                   {% elseif reservation.status == 'approved' %}
+                                    {% elseif reservation.status == 'approved' %}
 
-                                       Approved
+                                        Approved
 
-                                   {% elseif reservation.status == 'rejected' %}
+                                    {% elseif reservation.status == 'rejected' %}
 
-                                       Rejected
+                                        Rejected
 
-                                   {% elseif reservation.status == 'completed' %}
+                                    {% elseif reservation.status == 'completed' %}
 
-                                       Completed
+                                        Completed
 
-                                   {% else %}
+                                    {% else %}
 
-                                       N/A
+                                        N/A
 
-                                   {% endif %}
+                                    {% endif %}
 
-                               </a>
+                                </a>
 
-                           </td>
-
+                            </td>
 
                         </tr>
 
@@ -262,14 +279,14 @@
 
                         <tr>
 
-                            <td colspan="12" class="text-center py-5 text-muted">
+                            <td colspan="12"
+                                class="text-center py-5 text-muted">
 
                                 <h5>No reservations found</h5>
 
                             </td>
 
                         </tr>
-
 
                     {% endfor %}
 

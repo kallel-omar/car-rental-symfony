@@ -3,17 +3,27 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+
+use Doctrine\DBAL\Types\Types;
+
 use Doctrine\ORM\Mapping as ORM;
+
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(
+    fields: ['email'],
+    message: 'There is already an account with this email'
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -28,14 +38,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $email = null;
 
+    #[ORM\Column]
+    private ?bool $isBlocked = false;
+
+
     /**
-     * @var list<string> The user roles
+     * @var list<string>
      */
     #[ORM\Column]
     private array $roles = [];
 
     /**
-     * @var string The hashed password
+     * @var string
      */
     #[ORM\Column]
     private ?string $password = null;
@@ -43,10 +57,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $isVerified = false;
 
+    // PROFILE FIELDS
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $fullName = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $phoneNumber = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $cinImage = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $licenseImage = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $licenseIssueDate = null;
+
     /**
      * @var Collection<int, Reservation>
      */
-    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user')]
+    #[ORM\OneToMany(
+        targetEntity: Reservation::class,
+        mappedBy: 'user'
+    )]
     private Collection $reservations;
 
     public function __construct()
@@ -73,8 +107,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * A visual identifier that represents this user.
-     *
-     * @see UserInterface
      */
     public function getUserIdentifier(): string
     {
@@ -87,7 +119,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -119,12 +151,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
+     * Ensure the session doesn't contain actual password hashes.
      */
     public function __serialize(): array
     {
         $data = (array) $this;
-        $data["\0" . self::class . "\0password"] = hash('crc32c', $this->password);
+
+        $data["\0" . self::class . "\0password"] =
+            hash('crc32c', $this->password);
 
         return $data;
     }
@@ -132,7 +166,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[\Deprecated]
     public function eraseCredentials(): void
     {
-        // @deprecated, to be removed when upgrading to Symfony 8
+        // deprecated
     }
 
     public function isVerified(): bool
@@ -147,6 +181,70 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    // PROFILE GETTERS / SETTERS
+
+    public function getFullName(): ?string
+    {
+        return $this->fullName;
+    }
+
+    public function setFullName(?string $fullName): static
+    {
+        $this->fullName = $fullName;
+
+        return $this;
+    }
+
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(?string $phoneNumber): static
+    {
+        $this->phoneNumber = $phoneNumber;
+
+        return $this;
+    }
+
+    public function getCinImage(): ?string
+    {
+        return $this->cinImage;
+    }
+
+    public function setCinImage(?string $cinImage): static
+    {
+        $this->cinImage = $cinImage;
+
+        return $this;
+    }
+
+    public function getLicenseImage(): ?string
+    {
+        return $this->licenseImage;
+    }
+
+    public function setLicenseImage(?string $licenseImage): static
+    {
+        $this->licenseImage = $licenseImage;
+
+        return $this;
+    }
+
+    public function getLicenseIssueDate(): ?\DateTimeInterface
+    {
+        return $this->licenseIssueDate;
+    }
+
+    public function setLicenseIssueDate(
+        ?\DateTimeInterface $licenseIssueDate
+    ): static {
+
+        $this->licenseIssueDate = $licenseIssueDate;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Reservation>
      */
@@ -155,24 +253,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->reservations;
     }
 
-    public function addReservation(Reservation $reservation): static
-    {
+    public function addReservation(
+        Reservation $reservation
+    ): static {
+
         if (!$this->reservations->contains($reservation)) {
+
             $this->reservations->add($reservation);
+
             $reservation->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeReservation(Reservation $reservation): static
-    {
+    public function removeReservation(
+        Reservation $reservation
+    ): static {
+
         if ($this->reservations->removeElement($reservation)) {
-            // set the owning side to null (unless already changed)
+
             if ($reservation->getUser() === $this) {
+
                 $reservation->setUser(null);
             }
         }
+
+        return $this;
+    }
+    public function isBlocked(): ?bool
+    {
+        return $this->isBlocked;
+    }
+
+    public function setIsBlocked(bool $isBlocked): static
+    {
+        $this->isBlocked = $isBlocked;
 
         return $this;
     }

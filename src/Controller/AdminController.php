@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+
 
 #[Route('/admin')]
 #[IsGranted('ROLE_ADMIN')]
@@ -57,5 +60,40 @@ class AdminController extends AbstractController
             'cars' => $cars,
             'currentStatus' => $status,
         ]);
+    }
+    #[Route('/admin/user/{id}/block', name: 'app_admin_block_user')]
+    public function blockUser(
+        User $user,
+        EntityManagerInterface $entityManager
+    ): Response {
+
+        $user->setIsBlocked(true);
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'User blocked successfully.');
+
+        return $this->redirectToRoute(
+            'app_admin_user_profile',
+            ['id' => $user->getId()]
+        );
+    }
+
+    #[Route('/admin/user/{id}/unblock', name: 'app_admin_unblock_user')]
+    public function unblockUser(
+        User $user,
+        EntityManagerInterface $entityManager
+    ): Response {
+
+        $user->setIsBlocked(false);
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'User unblocked successfully.');
+
+        return $this->redirectToRoute(
+            'app_admin_user_profile',
+            ['id' => $user->getId()]
+        );
     }
 }

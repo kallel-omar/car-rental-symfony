@@ -3,9 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\ReservationRepository;
+
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Entity\User;
 use App\Entity\Car;
@@ -22,36 +22,18 @@ class Reservation
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\Column(length: 20)]
-    private ?string $status = 'pending';
-
-    // PAYMENT METHOD
-    #[ORM\Column(length: 50)]
-    private ?string $paymentMethod = 'cash';
-
-    // PAYMENT STATUS
-    #[ORM\Column(length: 50)]
-    private ?string $paymentStatus = 'unpaid';
-
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Car $car = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $fullName = null;
+    #[ORM\Column(length: 20)]
+    private ?string $status = 'pending';
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 50)]
+    private ?string $paymentMethod = 'cash';
 
-    #[Assert\NotBlank(
-        message: 'Please enter your phone number.'
-    )]
-
-    #[Assert\Regex(
-        pattern: '/^[0-9]{8,15}$/',
-        message: 'Phone number must contain only numbers and be between 8 and 15 digits.'
-    )]
-
-    private ?string $phoneNumber = null;
+    #[ORM\Column(length: 50)]
+    private ?string $paymentStatus = 'unpaid';
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $startDate = null;
@@ -62,20 +44,12 @@ class Reservation
     #[ORM\Column]
     private ?float $totalPrice = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $cinImage = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $licenseImage = null;
-
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $licenseIssueDate = null;
-
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    // USER
     public function getUser(): ?User
     {
         return $this->user;
@@ -88,6 +62,20 @@ class Reservation
         return $this;
     }
 
+    // CAR
+    public function getCar(): ?Car
+    {
+        return $this->car;
+    }
+
+    public function setCar(?Car $car): static
+    {
+        $this->car = $car;
+
+        return $this;
+    }
+
+    // STATUS
     public function getStatus(): ?string
     {
         return $this->status;
@@ -126,66 +114,37 @@ class Reservation
         return $this;
     }
 
-    public function getCar(): ?Car
-    {
-        return $this->car;
-    }
-
-    public function setCar(?Car $car): static
-    {
-        $this->car = $car;
-
-        return $this;
-    }
-
-    public function getFullName(): ?string
-    {
-        return $this->fullName;
-    }
-
-    public function setFullName(string $fullName): static
-    {
-        $this->fullName = $fullName;
-
-        return $this;
-    }
-
-    public function getPhoneNumber(): ?string
-    {
-        return $this->phoneNumber;
-    }
-
-    public function setPhoneNumber(string $phoneNumber): static
-    {
-        $this->phoneNumber = $phoneNumber;
-
-        return $this;
-    }
-
+    // START DATE
     public function getStartDate(): ?\DateTimeInterface
     {
         return $this->startDate;
     }
 
-    public function setStartDate(\DateTimeInterface $startDate): static
-    {
+    public function setStartDate(
+        \DateTimeInterface $startDate
+    ): static {
+
         $this->startDate = $startDate;
 
         return $this;
     }
 
+    // END DATE
     public function getEndDate(): ?\DateTimeInterface
     {
         return $this->endDate;
     }
 
-    public function setEndDate(\DateTimeInterface $endDate): static
-    {
+    public function setEndDate(
+        \DateTimeInterface $endDate
+    ): static {
+
         $this->endDate = $endDate;
 
         return $this;
     }
 
+    // TOTAL PRICE
     public function getTotalPrice(): ?float
     {
         return $this->totalPrice;
@@ -194,42 +153,6 @@ class Reservation
     public function setTotalPrice(float $totalPrice): static
     {
         $this->totalPrice = $totalPrice;
-
-        return $this;
-    }
-
-    public function getCinImage(): ?string
-    {
-        return $this->cinImage;
-    }
-
-    public function setCinImage(?string $cinImage): static
-    {
-        $this->cinImage = $cinImage;
-
-        return $this;
-    }
-
-    public function getLicenseImage(): ?string
-    {
-        return $this->licenseImage;
-    }
-
-    public function setLicenseImage(?string $licenseImage): static
-    {
-        $this->licenseImage = $licenseImage;
-
-        return $this;
-    }
-
-    public function getLicenseIssueDate(): ?\DateTimeInterface
-    {
-        return $this->licenseIssueDate;
-    }
-
-    public function setLicenseIssueDate(?\DateTimeInterface $licenseIssueDate): static
-    {
-        $this->licenseIssueDate = $licenseIssueDate;
 
         return $this;
     }

@@ -61,6 +61,41 @@ final class ReservationController extends AbstractController
         );
     }
 
+    #[Route('/disabled-dates/{id}', name: 'app_reservation_disabled_dates', methods: ['GET'])]
+    public function disabledDates(
+        \App\Entity\Car $car,
+        ReservationRepository $reservationRepository
+    ): Response {
+
+        $reservations = $reservationRepository->findBy([
+            'car' => $car
+        ]);
+
+        $disabledDates = [];
+
+        foreach ($reservations as $reservation) {
+
+            if (
+                !in_array($reservation->getStatus(), ['approved'])
+                || $reservation->getEndDate() < new \DateTime()
+            ) {
+                continue;
+            }
+
+            $start = clone $reservation->getStartDate();
+            $end = clone $reservation->getEndDate();
+
+            while ($start <= $end) {
+
+                $disabledDates[] = $start->format('Y-m-d');
+
+                $start->modify('+1 day');
+            }
+        }
+
+        return $this->json($disabledDates);
+    }
+
     #[Route('/new', name: 'app_reservation_new', methods: ['GET', 'POST'])]
     public function new(
         Request $request,
@@ -72,7 +107,9 @@ final class ReservationController extends AbstractController
 
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        if (!$this->getUser()->isVerified()) {
+        $user = $this->getUser();
+
+        if (!$user->isVerified()) {
 
             $this->addFlash(
                 'danger',
@@ -84,7 +121,6 @@ final class ReservationController extends AbstractController
 
         $reservation = new Reservation();
 
-        // AUTO SELECT CAR
         $carId = $request->query->get('car');
 
         if ($carId) {
@@ -104,10 +140,9 @@ final class ReservationController extends AbstractController
 
         $form->handleRequest($request);
 
-
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $reservation->setUser($this->getUser());
+            $reservation->setUser($user);
 
             $start = $reservation->getStartDate();
             $end   = $reservation->getEndDate();
@@ -137,7 +172,13 @@ final class ReservationController extends AbstractController
                 );
             }
 
-            $licenseDate = $reservation->getLicenseIssueDate();
+            // PROFILE DATA
+
+            $fullName = $form->get('fullName')->getData();
+
+            $phoneNumber = $form->get('phoneNumber')->getData();
+
+            $licenseDate = $form->get('licenseIssueDate')->getData();
 
             if ($licenseDate) {
 
@@ -158,6 +199,25 @@ final class ReservationController extends AbstractController
                 }
             }
 
+            // SAVE USER PROFILE
+
+            if ($fullName) {
+
+                $user->setFullName($fullName);
+            }
+
+            if ($phoneNumber) {
+
+                $user->setPhoneNumber($phoneNumber);
+            }
+
+            if ($licenseDate) {
+
+                $user->setLicenseIssueDate($licenseDate);
+            }
+
+            // CHECK OVERLAP
+
             if (
                 $reservationRepository->hasOverlap(
                     $car,
@@ -177,6 +237,7 @@ final class ReservationController extends AbstractController
             }
 
             // CIN IMAGE
+
             $cinFile = $form->get('cinImage')->getData();
 
             if ($cinFile) {
@@ -209,10 +270,11 @@ final class ReservationController extends AbstractController
 
                 }
 
-                $reservation->setCinImage($newFilename);
+                $user->setCinImage($newFilename);
             }
 
             // LICENSE IMAGE
+
             $licenseFile = $form->get('licenseImage')->getData();
 
             if ($licenseFile) {
@@ -245,10 +307,11 @@ final class ReservationController extends AbstractController
 
                 }
 
-                $reservation->setLicenseImage($newFilename);
+                $user->setLicenseImage($newFilename);
             }
 
             // TOTAL PRICE
+
             $days = max(
                 1,
                 $start->diff($end)->days
@@ -258,15 +321,12 @@ final class ReservationController extends AbstractController
                 $days * $car->getPricePerDay()
             );
 
-            // DEFAULT STATUS
             $reservation->setStatus('pending');
 
-            // PAYMENT
             $reservation->setPaymentMethod('cash');
 
             $reservation->setPaymentStatus('unpaid');
 
-            // SAVE
             $entityManager->persist($reservation);
 
             $entityManager->flush();
@@ -340,13 +400,7 @@ final class ReservationController extends AbstractController
             ->from('noreply@carbook.com')
             ->to($reservation->getUser()->getEmail())
             ->subject('Payment Confirmed')
-            ->html('
-                <h2>Your cash payment has been confirmed 💵</h2>
-
-                <p>
-                    Your reservation payment was confirmed successfully.
-                </p>
-            ');
+            ->html('<h2>Your cash payment has been confirmed 💵</h2>');
 
         $mailer->send($email);
 
@@ -369,35 +423,15 @@ final class ReservationController extends AbstractController
         MailerInterface $mailer
     ): Response {
 
-        // APPROVE RESERVATION
         $reservation->setStatus('approved');
-
-        // CAR BECOMES UNAVAILABLE
-        $reservation->getCar()->setStatus('unavailable');
 
         $entityManager->flush();
 
-        // EMAIL
         $email = (new Email())
             ->from('noreply@carbook.com')
             ->to($reservation->getUser()->getEmail())
             ->subject('Reservation Approved')
-            ->html('
-                <h2>Your reservation has been approved ✅</h2>
-
-                <p>
-                    Your reservation for
-                    <strong>'
-                .$reservation->getCar()->getBrand().' '
-                .$reservation->getCar()->getModel().
-                '</strong>
-                    has been approved.
-                </p>
-
-                <p>
-                    Please proceed with cash payment to receive the car.
-                </p>
-            ');
+            ->html('<h2>Your reservation has been approved ✅</h2>');
 
         $mailer->send($email);
 
@@ -428,9 +462,7 @@ final class ReservationController extends AbstractController
             ->from('noreply@carbook.com')
             ->to($reservation->getUser()->getEmail())
             ->subject('Reservation Rejected')
-            ->html('
-                <h2>Your reservation has been rejected ❌</h2>
-            ');
+            ->html('<h2>Your reservation has been rejected ❌</h2>');
 
         $mailer->send($email);
 
@@ -454,18 +486,13 @@ final class ReservationController extends AbstractController
 
         $reservation->setStatus('completed');
 
-        // CAR AVAILABLE AGAIN
-        $reservation->getCar()->setStatus('available');
-
         $entityManager->flush();
 
         $email = (new Email())
             ->from('noreply@carbook.com')
             ->to($reservation->getUser()->getEmail())
             ->subject('Reservation Completed')
-            ->html('
-                <h2>Your reservation is completed 🚗</h2>
-            ');
+            ->html('<h2>Your reservation is completed 🚗</h2>');
 
         $mailer->send($email);
 
@@ -494,16 +521,6 @@ final class ReservationController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        if (!in_array($reservation->getStatus(), ['approved', 'completed'])) {
-
-            $this->addFlash(
-                'danger',
-                'Invoice only available for approved reservations.'
-            );
-
-            return $this->redirectToRoute('app_my_reservations');
-        }
-
         $options = new Options();
 
         $options->set('defaultFont', 'Arial');
@@ -523,18 +540,15 @@ final class ReservationController extends AbstractController
 
         $dompdf->render();
 
-        $pdfOutput = $dompdf->output();
-
         return new Response(
-            $pdfOutput,
+            $dompdf->output(),
             200,
             [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' =>
-                    'attachment; filename="reservation-'.$reservation->getId().'.pdf"'
             ]
         );
     }
+
     #[Route('/calendar', name: 'app_reservation_calendar', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function calendar(

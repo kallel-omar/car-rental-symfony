@@ -188,8 +188,6 @@
 
     </div>
 
-
-
     {# LATEST RESERVATIONS #}
     <div class="card border-0 shadow-sm mb-4">
 
@@ -219,9 +217,8 @@
 
                         <tr>
 
-
                             <th>Client</th>
-                            <th>Client Phone </th>
+                            <th>Client Phone</th>
                             <th>Car</th>
                             <th>Period</th>
                             <th>Status</th>
@@ -241,18 +238,24 @@
                         >
 
                             <td>
-                                {{ r.fullName }}
+
+                                {{ r.user.fullName ?: 'No Name' }}
+
                             </td>
 
                             <td>
-                                {{ r.phoneNumber }}
+
+                                {{ r.user.phoneNumber ?: 'No Phone' }}
+
                             </td>
 
                             <td>
 
                                 <div class="fw-semibold">
+
                                     {{ r.car.brand }}
                                     {{ r.car.model }}
+
                                 </div>
 
                             </td>
@@ -260,21 +263,25 @@
                             <td>
 
                                 <div>
+
                                     <strong>From:</strong>
 
                                     {{ r.startDate
                                         ? r.startDate|date('d M Y')
                                         : ''
                                     }}
+
                                 </div>
 
                                 <div>
+
                                     <strong>To:</strong>
 
                                     {{ r.endDate
                                         ? r.endDate|date('d M Y')
                                         : ''
                                     }}
+
                                 </div>
 
                             </td>
@@ -284,25 +291,33 @@
                                 {% if r.status == 'pending' %}
 
                                     <span class="badge bg-warning text-dark">
+
                                         Pending
+
                                     </span>
 
                                 {% elseif r.status == 'approved' %}
 
                                     <span class="badge bg-success">
+
                                         Approved
+
                                     </span>
 
                                 {% elseif r.status == 'completed' %}
 
                                     <span class="badge bg-primary">
+
                                         Completed
+
                                     </span>
 
                                 {% else %}
 
                                     <span class="badge bg-danger">
+
                                         Rejected
+
                                     </span>
 
                                 {% endif %}
@@ -310,7 +325,9 @@
                             </td>
 
                             <td class="fw-bold text-success">
+
                                 {{ r.totalPrice }} €
+
                             </td>
 
                         </tr>
@@ -327,11 +344,6 @@
 
     </div>
 
-
-
+</div>
 
 {% endblock %}
-
-
-
-

@@ -37,9 +37,19 @@ class ReservationType extends AbstractType
                 'placeholder' => 'Choose a car',
             ])
 
-            ->add('fullName', TextType::class)
+            // USER PROFILE FIELDS
 
-            ->add('phoneNumber', TextType::class)
+            ->add('fullName', TextType::class, [
+                'mapped' => false,
+                'required' => false,
+            ])
+
+            ->add('phoneNumber', TextType::class, [
+                'mapped' => false,
+                'required' => false,
+            ])
+
+            // RESERVATION DATES
 
             ->add('startDate', DateType::class, [
                 'widget' => 'single_text',
@@ -49,7 +59,11 @@ class ReservationType extends AbstractType
                 'widget' => 'single_text',
             ])
 
+            // USER LICENSE INFO
+
             ->add('licenseIssueDate', DateType::class, [
+                'mapped' => false,
+                'required' => false,
                 'widget' => 'single_text',
             ])
 
@@ -62,6 +76,7 @@ class ReservationType extends AbstractType
                 'mapped' => false,
                 'required' => false,
             ])
+
         ;
     }
 
