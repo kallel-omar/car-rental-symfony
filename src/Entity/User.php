@@ -83,9 +83,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private Collection $reservations;
 
+    /**
+     * @var Collection<int, RentalProcess>
+     */
+    #[ORM\OneToMany(targetEntity: RentalProcess::class, mappedBy: 'user')]
+    private Collection $rentalProcesses;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
+        $this->rentalProcesses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -289,6 +296,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsBlocked(bool $isBlocked): static
     {
         $this->isBlocked = $isBlocked;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RentalProcess>
+     */
+    public function getRentalProcesses(): Collection
+    {
+        return $this->rentalProcesses;
+    }
+
+    public function addRentalProcess(RentalProcess $rentalProcess): static
+    {
+        if (!$this->rentalProcesses->contains($rentalProcess)) {
+            $this->rentalProcesses->add($rentalProcess);
+            $rentalProcess->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRentalProcess(RentalProcess $rentalProcess): static
+    {
+        if ($this->rentalProcesses->removeElement($rentalProcess)) {
+            // set the owning side to null (unless already changed)
+            if ($rentalProcess->getUser() === $this) {
+                $rentalProcess->setUser(null);
+            }
+        }
 
         return $this;
     }

@@ -4,111 +4,6 @@
 
 {% block body %}
 
-<style>
-    .save-btn,
-    .cancel-btn{
-        padding: 14px 30px;
-        border-radius: 16px;
-        font-weight: 700;
-        min-width: 130px;
-        height: 52px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-.edit-wrapper{
-    padding: 140px 0 80px;
-    background: #f8f9fa;
-    min-height: 100vh;
-}
-
-.edit-card{
-    background: white;
-    border-radius: 32px;
-    padding: 45px;
-    box-shadow: 0 15px 45px rgba(0,0,0,0.06);
-}
-
-.edit-title{
-    font-size: 2.3rem;
-    font-weight: 800;
-    color: #111827;
-}
-
-.edit-subtitle{
-    color: #6b7280;
-    margin-top: 8px;
-}
-
-.section-title{
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 24px;
-    color: #111827;
-}
-
-.form-control{
-    border-radius: 16px;
-    padding: 14px 18px;
-    border: 1px solid #e5e7eb;
-    background: #fcfcfc;
-}
-
-.form-control:focus{
-    border-color: #198754;
-    box-shadow: 0 0 0 .18rem rgba(25,135,84,.12);
-}
-
-.form-label{
-    font-weight: 700;
-    margin-bottom: 10px;
-}
-
-.document-box{
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 24px;
-    padding: 24px;
-    height: 100%;
-}
-
-.document-image{
-    width: 100%;
-    max-height: 220px;
-    object-fit: cover;
-    border-radius: 18px;
-    border: 1px solid #dee2e6;
-}
-
-.save-btn{
-    background: linear-gradient(135deg,#198754,#157347);
-    border: none;
-    color: white;
-    padding: 14px 28px;
-    border-radius: 16px;
-    font-weight: 700;
-}
-
-.cancel-btn{
-    padding: 14px 28px;
-    border-radius: 16px;
-    font-weight: 700;
-}
-
-@media(max-width:768px){
-
-    .edit-card{
-        padding: 28px;
-    }
-
-    .edit-title{
-        font-size: 2rem;
-    }
-}
-
-</style>
-
 <section class="edit-wrapper">
 
     <div class="container">
@@ -118,15 +13,11 @@
             <div class="mb-5">
 
                 <h1 class="edit-title">
-
                     Edit Profile
-
                 </h1>
 
                 <p class="edit-subtitle">
-
                     Update your personal information and documents
-
                 </p>
 
             </div>
@@ -137,25 +28,25 @@
                 }
             }) }}
 
-            <div class="section-title">
+            <div class="edit-section-title">
 
                 Personal Information
 
             </div>
 
             <div class="row">
-                 <div class="col-lg-6 mb-4">
 
-                                    {{ form_label(form.email) }}
+                <div class="col-lg-6 mb-4">
 
-                                    {{ form_widget(form.email, {
-                                        'attr': {
-                                            'class': 'form-control'
-                                        }
-                                    }) }}
+                    {{ form_label(form.email) }}
 
-                                </div>
+                    {{ form_widget(form.email, {
+                        'attr': {
+                            'class': 'form-control'
+                        }
+                    }) }}
 
+                </div>
 
                 <div class="col-lg-6 mb-4">
 
@@ -195,7 +86,7 @@
 
             </div>
 
-            <div class="section-title mt-3">
+            <div class="edit-section-title mt-3">
 
                 Documents
 
@@ -205,19 +96,17 @@
 
                 <div class="col-lg-6 mb-4">
 
-                    <div class="document-box">
+                    <div class="edit-document-box">
 
                         <h5 class="mb-3 fw-bold">
-
                             CIN Document
-
                         </h5>
 
                         {% if app.user.cinImage %}
 
                             <img
                                 src="{{ asset('uploads/cin/' ~ app.user.cinImage) }}"
-                                class="document-image mb-3"
+                                class="edit-document-image mb-3"
                             >
 
                         {% endif %}
@@ -240,19 +129,17 @@
 
                 <div class="col-lg-6 mb-4">
 
-                    <div class="document-box">
+                    <div class="edit-document-box">
 
                         <h5 class="mb-3 fw-bold">
-
                             Driver License
-
                         </h5>
 
                         {% if app.user.licenseImage %}
 
                             <img
                                 src="{{ asset('uploads/licenses/' ~ app.user.licenseImage) }}"
-                                class="document-image mb-3"
+                                class="edit-document-image mb-3"
                             >
 
                         {% endif %}
@@ -275,30 +162,22 @@
 
             </div>
 
-           <div class="mt-4 d-flex flex-wrap align-items-center">
+            <div class="mt-4 d-flex flex-wrap align-items-center gap-3">
 
-               <span class="mr-3">
+                <button class="save-btn">
 
-                   <button class="save-btn">
+                    Save
 
-                       Save
+                </button>
 
-                   </button>
+                <a href="{{ path('app_user_profile') }}"
+                   class="cancel-btn btn btn-dark">
 
-               </span>
+                    Cancel
 
-               <span>
+                </a>
 
-                   <a href="{{ path('app_user_profile') }}"
-                      class="cancel-btn btn btn-dark">
-
-                       Cancel
-
-                   </a>
-
-               </span>
-
-           </div>
+            </div>
 
             {{ form_end(form) }}
 

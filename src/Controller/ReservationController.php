@@ -25,6 +25,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use App\Entity\RentalProcess;
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -40,23 +41,53 @@ final class ReservationController extends AbstractController
     ): Response {
 
         $status = $request->query->get('status');
+        $search = $request->query->get('search');
 
-        $criteria = [];
+        $qb = $reservationRepository->createQueryBuilder('r')
+            ->leftJoin('r.user', 'u')
+            ->leftJoin('r.car', 'c');
 
-        if ($status) {
+        if ($status === 'waiting_pickup') {
 
-            $criteria['status'] = $status;
+            $qb->leftJoin('r.rentalProcesses', 'rp')
+                ->andWhere('rp.status = :pickup')
+                ->setParameter('pickup', 'waiting_pickup');
+
+        } elseif ($status === 'picked_up') {
+
+            $qb->leftJoin('r.rentalProcesses', 'rp')
+                ->andWhere('rp.status = :picked')
+                ->setParameter('picked', 'picked_up');
+
+        } elseif ($status) {
+
+            $qb->andWhere('r.status = :status')
+                ->setParameter('status', $status);
         }
 
-        $reservations = $reservationRepository->findBy(
-            $criteria,
-            ['id' => 'DESC']
-        );
+        if ($search) {
+
+            $qb->andWhere(
+                'u.fullName LIKE :search
+             OR u.email LIKE :search
+             OR u.phoneNumber LIKE :search
+             OR c.brand LIKE :search
+             OR c.model LIKE :search'
+            )
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        $reservations = $qb
+            ->orderBy('r.id', 'DESC')
+            ->getQuery()
+            ->getResult();
 
         return $this->render(
             'reservation/index.html.twig',
             [
                 'reservations' => $reservations,
+                'currentStatus' => $status,
+                'search' => $search,
             ]
         );
     }
@@ -369,6 +400,77 @@ final class ReservationController extends AbstractController
             ]
         );
     }
+    #[Route('/calendar', name: 'app_reservation_calendar', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function calendar(
+        ReservationRepository $reservationRepository
+    ): Response {
+
+        $reservations = $reservationRepository
+            ->createQueryBuilder('r')
+            ->leftJoin('r.rentalProcesses', 'rp')
+            ->where(
+                "r.status = 'pending'
+         OR (r.status = 'approved' AND r.paymentStatus = 'unpaid')
+         OR (r.status = 'approved' AND r.paymentStatus = 'paid' AND rp.status = 'waiting_pickup')
+         OR (r.status = 'approved' AND r.paymentStatus = 'paid' AND rp.status = 'picked_up')"
+            )
+            ->getQuery()
+            ->getResult();
+
+        $events = [];
+
+        foreach ($reservations as $reservation) {
+
+            $events[] = [
+
+                'title' =>
+                    $reservation->getCar()->getBrand().' '.
+                    $reservation->getCar()->getModel(),
+
+                'start' =>
+                    $reservation->getStartDate()->format('Y-m-d'),
+
+                'end' =>
+                    $reservation->getEndDate()
+                        ->modify('+1 day')
+                        ->format('Y-m-d'),
+
+                'url' => $this->generateUrl(
+                    'app_reservation_show',
+                    ['id' => $reservation->getId()]
+                ),
+
+                'color' => match (true) {
+
+                    $reservation->getStatus() === 'pending'
+                    => '#6b7280',
+
+                    $reservation->getStatus() === 'approved'
+                    && $reservation->getPaymentStatus() === 'paid'
+                    && $reservation->getRentalProcesses()->first()
+                    && $reservation->getRentalProcesses()->first()->getStatus() === 'waiting_pickup'
+                    => '#f59e0b',
+
+                    $reservation->getStatus() === 'approved'
+                    && $reservation->getPaymentStatus() === 'paid'
+                    && $reservation->getRentalProcesses()->first()
+                    && $reservation->getRentalProcesses()->first()->getStatus() === 'picked_up'
+                    => '#198754',
+
+                    default => '#6b7280'
+                }
+
+            ];
+        }
+
+        return $this->render(
+            'reservation/calendar.html.twig',
+            [
+                'events' => json_encode($events),
+            ]
+        );
+    }
 
     #[Route('/{id}', name: 'app_reservation_show', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
@@ -383,6 +485,64 @@ final class ReservationController extends AbstractController
             ]
         );
     }
+    #[Route('/{id}/approve', name: 'app_reservation_approve', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function approve(
+        Reservation $reservation,
+        EntityManagerInterface $entityManager,
+        MailerInterface $mailer,
+        ReservationRepository $reservationRepository
+    ): Response {
+
+        // CHECK IF ANOTHER APPROVED
+        // RESERVATION EXISTS
+
+        if (
+            $reservationRepository->hasOverlap(
+                $reservation->getCar(),
+                $reservation->getStartDate(),
+                $reservation->getEndDate(),
+                $reservation->getId()
+            )
+        ) {
+
+            $this->addFlash(
+                'danger',
+                'Another reservation is already approved for these dates.'
+            );
+
+            return $this->redirectToRoute(
+                'app_reservation_show',
+                ['id' => $reservation->getId()]
+            );
+        }
+
+        // APPROVE RESERVATION
+        $reservation->setStatus('approved');
+
+        $entityManager->flush();
+
+        // EMAIL
+        $email = (new Email())
+            ->from('noreply@carbook.com')
+            ->to($reservation->getUser()->getEmail())
+            ->subject('Reservation Approved')
+            ->html(
+                '<h2>Your reservation has been approved ✅</h2>'
+            );
+
+        $mailer->send($email);
+
+        $this->addFlash(
+            'success',
+            'Reservation approved successfully.'
+        );
+
+        return $this->redirectToRoute(
+            'app_reservation_show',
+            ['id' => $reservation->getId()]
+        );
+    }
 
     #[Route('/{id}/confirm-payment', name: 'app_reservation_confirm_payment', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
@@ -392,15 +552,38 @@ final class ReservationController extends AbstractController
         MailerInterface $mailer
     ): Response {
 
+        // PAYMENT CONFIRMED
         $reservation->setPaymentStatus('paid');
+
+        // CREATE RENTAL PROCESS
+        $rentalProcess = new RentalProcess();
+
+        $rentalProcess->setReservation($reservation);
+
+        $rentalProcess->setCar(
+            $reservation->getCar()
+        );
+
+        $rentalProcess->setUser(
+            $reservation->getUser()
+        );
+
+        $rentalProcess->setStatus(
+            'waiting_pickup'
+        );
+
+        $entityManager->persist($rentalProcess);
 
         $entityManager->flush();
 
+        // EMAIL
         $email = (new Email())
             ->from('noreply@carbook.com')
             ->to($reservation->getUser()->getEmail())
             ->subject('Payment Confirmed')
-            ->html('<h2>Your cash payment has been confirmed 💵</h2>');
+            ->html(
+                '<h2>Your cash payment has been confirmed 💵</h2>'
+            );
 
         $mailer->send($email);
 
@@ -415,36 +598,6 @@ final class ReservationController extends AbstractController
         );
     }
 
-    #[Route('/{id}/approve', name: 'app_reservation_approve', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function approve(
-        Reservation $reservation,
-        EntityManagerInterface $entityManager,
-        MailerInterface $mailer
-    ): Response {
-
-        $reservation->setStatus('approved');
-
-        $entityManager->flush();
-
-        $email = (new Email())
-            ->from('noreply@carbook.com')
-            ->to($reservation->getUser()->getEmail())
-            ->subject('Reservation Approved')
-            ->html('<h2>Your reservation has been approved ✅</h2>');
-
-        $mailer->send($email);
-
-        $this->addFlash(
-            'success',
-            'Reservation approved successfully.'
-        );
-
-        return $this->redirectToRoute(
-            'app_reservation_show',
-            ['id' => $reservation->getId()]
-        );
-    }
 
     #[Route('/{id}/reject', name: 'app_reservation_reject', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
@@ -549,50 +702,5 @@ final class ReservationController extends AbstractController
         );
     }
 
-    #[Route('/calendar', name: 'app_reservation_calendar', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function calendar(
-        ReservationRepository $reservationRepository
-    ): Response {
 
-        $reservations = $reservationRepository->findAll();
-
-        $events = [];
-
-        foreach ($reservations as $reservation) {
-
-            $events[] = [
-
-                'title' =>
-                    $reservation->getCar()->getBrand().' '.
-                    $reservation->getCar()->getModel(),
-
-                'start' =>
-                    $reservation->getStartDate()->format('Y-m-d'),
-
-                'end' =>
-                    $reservation->getEndDate()
-                        ->modify('+1 day')
-                        ->format('Y-m-d'),
-
-                'color' => match ($reservation->getStatus()) {
-
-                    'approved' => '#198754',
-                    'pending' => '#ffc107',
-                    'completed' => '#0d6efd',
-                    'rejected' => '#dc3545',
-
-                    default => '#6c757d'
-                }
-
-            ];
-        }
-
-        return $this->render(
-            'reservation/calendar.html.twig',
-            [
-                'events' => json_encode($events),
-            ]
-        );
-    }
 }

@@ -1,13 +1,42 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/layout.html.twig' %}
 
 {% block title %}Edit Car{% endblock %}
 
 {% block body %}
-    <h1>Edit Car</h1>
 
-    {{ include('car/_form.html.twig', {'button_label': 'Update'}) }}
+<div class="container py-5">
 
-    <a href="{{ path('app_car_index') }}">back to list</a>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-    {{ include('car/_delete_form.html.twig') }}
+        <div>
+            <h1 class="fw-bold mb-1">
+                Edit Car
+            </h1>
+
+            <p class="text-muted mb-0">
+                Update vehicle information
+            </p>
+        </div>
+
+        <a href="{{ path('admin_cars') }}"
+           class="btn btn-dark rounded-pill px-4">
+            ← Back
+        </a>
+
+    </div>
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-4">
+
+            {{ include('car/_form.html.twig', {
+                'button_label': 'Update Car'
+            }) }}
+
+        </div>
+
+    </div>
+
+</div>
+
 {% endblock %}

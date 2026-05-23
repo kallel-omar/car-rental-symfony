@@ -4,169 +4,88 @@
 
 {% block body %}
 
-<style>
-
-.users-card {
-    border-radius: 24px;
-    border: none;
-    overflow: hidden;
-}
-
-.users-table th {
-    font-size: 14px;
-    font-weight: 700;
-    color: #6b7280;
-    border-bottom: 1px solid #f1f3f5;
-    padding: 18px;
-}
-
-.users-table td {
-    vertical-align: middle;
-    padding: 18px;
-}
-
-.role-badge {
-    padding: 10px 16px;
-    border-radius: 50px;
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.role-user {
-    background: #dcfce7;
-    color: #166534;
-}
-
-.role-admin {
-    background: #111827;
-    color: white;
-}
-
-.role-superviser {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: white;
-}
-
-.status-badge {
-    padding: 10px 16px;
-    border-radius: 50px;
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.status-verified {
-    background: #dcfce7;
-    color: #166534;
-}
-
-.status-not-verified {
-    background: #fee2e2;
-    color: #991b1b;
-}
-
-.btn-action-admin {
-    background: linear-gradient(135deg, #111827, #1f2937);
-    color: white;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 12px;
-    font-weight: 600;
-    transition: 0.25s ease;
-}
-
-.btn-action-admin:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(17,24,39,0.25);
-    color: white;
-}
-
-.btn-action-superviser {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: white;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 12px;
-    font-weight: 600;
-    transition: 0.25s ease;
-}
-
-.btn-action-superviser:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(245,158,11,0.25);
-    color: white;
-}
-
-.btn-action-remove {
-    background: white;
-    color: #dc2626;
-    border: 1px solid #fecaca;
-    padding: 10px 18px;
-    border-radius: 12px;
-    font-weight: 600;
-    transition: 0.25s ease;
-}
-
-.btn-action-remove:hover {
-    background: #dc2626;
-    color: white;
-}
-
-.btn-action-disabled {
-    background: #f3f4f6;
-    color: #6b7280;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 12px;
-    font-weight: 600;
-}
-
-</style>
-
-<div class="container-fluid py-4">
+<div class="container py-5">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <div>
+            <h1 class="fw-bold mb-1">Users Management</h1>
+            <p class="text-muted mb-0">Manage all registered users</p>*
 
-            <h2 class="fw-bold mb-1">
-
-                Users Management
-
-            </h2>
-
-            <p class="text-muted mb-0">
-
-                Manage all registered users
-
-            </p>
 
         </div>
+    <form method="get" class="d-flex gap-2 mb-4">
+
+        {% if currentType %}
+            <input type="hidden" name="type" value="{{ currentType }}">
+        {% endif %}
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            class="form-control rounded-pill px-4"
+            placeholder="Search by name, email or phone">
+
+        <button class="btn btn-dark rounded-pill px-4">
+            Search
+        </button>
+
+    </form>
 
     </div>
 
-    <div class="card users-card shadow-sm">
+   <div class="card border-0 shadow-sm">
 
-        <div class="card-body p-0">
+           <div class="d-flex gap-2 flex-wrap mb-4 p-4 pb-0">
+
+                    <a
+                        href="{{ path('app_user_index') }}"
+                        class="btn btn-dark rounded-pill px-4">
+
+                        All
+
+                    </a>
+
+
+
+                    <a
+                        href="{{ path('app_user_index', {'type': 'clients'}) }}"
+                        class="btn btn-success rounded-pill px-4">
+
+                        Clients
+
+                    </a>
+
+                    <a
+                        href="{{ path('app_user_index', {'type': 'staff'}) }}"
+                        class="btn btn-warning rounded-pill px-4">
+
+                        Staff
+
+                    </a>
+
+                </div>
+
+
+
+        <div class="card-body p-4">
 
             {% if users|length > 0 %}
 
-                <div class="table-responsive">
+                <div class="table-responsive p-2">
 
-                    <table class="table users-table align-middle mb-0">
+                    <table class="table table-hover align-middle mb-0 custom-table">
 
-                        <thead>
+                        <thead class="table-dark">
 
                             <tr>
-
-
-                                 <th>Name</th>
-                                  <th>Email</th>
-                                 <th>Phone</th>
-
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
                                 <th>Role</th>
                                 <th>Status</th>
-                                <th class="text-end">Actions</th>
-
+                                <th class="text-center">Actions</th>
                             </tr>
 
                         </thead>
@@ -177,70 +96,45 @@
 
                             <tr>
 
+                                <td>
+                                    <a href="{{ path('app_admin_user_profile', {'id': user.id}) }}"
+                                       class="fw-semibold text-dark text-decoration-none">
 
-                         <td>
+                                        {{ user.fullName ?: 'Customer Account' }}
 
-                             <a href="{{ path('app_admin_user_profile', {'id': user.id}) }}"
-                                class="fw-semibold text-dark text-decoration-none">
+                                    </a>
+                                </td>
 
-                                 {% if user.fullName %}
-
-                                     {{ user.fullName }}
-
-                                 {% else %}
-
-                                     Customer Account
-
-                                 {% endif %}
-
-                             </a>
-
-                         </td>
-
-                         </td>
-                          <td>
-
-                                                             <div class="fw-semibold text-dark">
-
-                                                                 {{ user.email }}
-
-                                                             </div>
-
-                                                         </td>
-                             <td>
-
+                                <td>
                                     <div class="fw-semibold text-dark">
-
-                                           {{ user.phoneNumber }}
-
+                                        {{ user.email }}
                                     </div>
+                                </td>
 
-                              </td>
+                                <td>
+                                    <div class="fw-semibold text-dark">
+                                        {{ user.phoneNumber ?: 'No Phone' }}
+                                    </div>
+                                </td>
 
                                 <td>
 
                                     {% if 'ROLE_SUPERVISER' in user.roles %}
 
                                         <span class="role-badge role-superviser">
-
                                             Superviser
-
                                         </span>
 
                                     {% elseif 'ROLE_ADMIN' in user.roles %}
 
                                         <span class="role-badge role-admin">
-
                                             Admin
-
                                         </span>
 
                                     {% else %}
 
                                         <span class="role-badge role-user">
-
                                             User
-
                                         </span>
 
                                     {% endif %}
@@ -251,29 +145,25 @@
 
                                     {% if user.isVerified %}
 
-                                        <span class="status-badge status-verified">
-
+                                        <span class="status-badge approved">
                                             Verified
-
                                         </span>
 
                                     {% else %}
 
-                                        <span class="status-badge status-not-verified">
-
+                                        <span class="status-badge rejected">
                                             Not Verified
-
                                         </span>
 
                                     {% endif %}
 
                                 </td>
 
-                                <td class="text-end">
+                                <td class="text-center">
 
                                     {% if is_granted('ROLE_SUPERVISER') %}
 
-                                        <div class="d-flex justify-content-end gap-2 flex-wrap">
+                                        <div class="d-flex justify-content-center gap-2 flex-wrap">
 
                                             {% if 'ROLE_SUPERVISER' in user.roles %}
 
@@ -283,20 +173,15 @@
                                                           action="{{ path('app_user_remove_superviser', {'id': user.id}) }}">
 
                                                         <button class="btn-action-remove">
-
                                                             Remove Superviser
-
                                                         </button>
 
                                                     </form>
 
                                                 {% else %}
 
-                                                    <button class="btn-action-disabled"
-                                                            disabled>
-
+                                                    <button class="btn-action-disabled" disabled>
                                                         Your Account
-
                                                     </button>
 
                                                 {% endif %}
@@ -307,9 +192,7 @@
                                                       action="{{ path('app_user_remove_admin', {'id': user.id}) }}">
 
                                                     <button class="btn-action-remove">
-
                                                         Remove Admin
-
                                                     </button>
 
                                                 </form>
@@ -318,9 +201,7 @@
                                                       action="{{ path('app_user_make_superviser', {'id': user.id}) }}">
 
                                                     <button class="btn-action-superviser">
-
                                                         Make Superviser
-
                                                     </button>
 
                                                 </form>
@@ -331,9 +212,7 @@
                                                       action="{{ path('app_user_make_admin', {'id': user.id}) }}">
 
                                                     <button class="btn-action-admin">
-
                                                         Make Admin
-
                                                     </button>
 
                                                 </form>
@@ -342,20 +221,15 @@
                                                       action="{{ path('app_user_make_superviser', {'id': user.id}) }}">
 
                                                     <button class="btn-action-superviser">
-
                                                         Make Superviser
-
                                                     </button>
 
                                                 </form>
 
                                             {% else %}
 
-                                                <button class="btn-action-disabled"
-                                                        disabled>
-
+                                                <button class="btn-action-disabled" disabled>
                                                     User Not Verified
-
                                                 </button>
 
                                             {% endif %}
@@ -365,9 +239,7 @@
                                     {% else %}
 
                                         <span class="text-muted small">
-
                                             No Permission
-
                                         </span>
 
                                     {% endif %}
@@ -383,21 +255,16 @@
                     </table>
 
                 </div>
+            </div>
 
             {% else %}
 
                 <div class="text-center py-5">
 
-                    <h4 class="fw-bold">
-
-                        No Users Found
-
-                    </h4>
+                    <h4 class="fw-bold">No Users Found</h4>
 
                     <p class="text-muted mb-0">
-
                         There are no registered users yet.
-
                     </p>
 
                 </div>

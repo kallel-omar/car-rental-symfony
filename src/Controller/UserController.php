@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\Routing\Attribute\Route;
 
+
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Form\EditProfileType;
 
@@ -30,15 +31,44 @@ final class UserController extends AbstractController
     #[Route('/user', name: 'app_user_index', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function index(
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        Request $request
     ): Response {
 
-        return $this->render(
-            'user/index.html.twig',
-            [
-                'users' => $userRepository->findAll(),
-            ]
-        );
+        $type = $request->query->get('type');
+        $search = $request->query->get('search');
+
+        $qb = $userRepository->createQueryBuilder('u');
+
+        if ($type === 'clients') {
+            $qb->where('u.roles NOT LIKE :admin')
+                ->andWhere('u.roles NOT LIKE :superviser')
+                ->setParameter('admin', '%ROLE_ADMIN%')
+                ->setParameter('superviser', '%ROLE_SUPERVISER%');
+        }
+
+        if ($type === 'staff') {
+            $qb->where('u.roles LIKE :admin OR u.roles LIKE :superviser')
+                ->setParameter('admin', '%ROLE_ADMIN%')
+                ->setParameter('superviser', '%ROLE_SUPERVISER%');
+        }
+
+        if ($search) {
+            $qb->andWhere(
+                'u.fullName LIKE :search
+             OR u.email LIKE :search
+             OR u.phoneNumber LIKE :search'
+            )
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        $users = $qb->getQuery()->getResult();
+
+        return $this->render('user/index.html.twig', [
+            'users' => $users,
+            'currentType' => $type,
+            'search' => $search,
+        ]);
     }
 
 

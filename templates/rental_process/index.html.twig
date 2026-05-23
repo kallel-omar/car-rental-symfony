@@ -1,0 +1,49 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}RentalProcess index{% endblock %}
+
+{% block body %}
+    <h1>RentalProcess index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>PickupType</th>
+                <th>DeliveryAddress</th>
+                <th>PickupFuelLevel</th>
+                <th>PickupKilometers</th>
+                <th>ReturnFuelLevel</th>
+                <th>ReturnKilometers</th>
+                <th>Status</th>
+                <th>PickupTime</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for rental_process in rental_processes %}
+            <tr>
+                <td>{{ rental_process.id }}</td>
+                <td>{{ rental_process.pickupType }}</td>
+                <td>{{ rental_process.deliveryAddress }}</td>
+                <td>{{ rental_process.pickupFuelLevel }}</td>
+                <td>{{ rental_process.pickupKilometers }}</td>
+                <td>{{ rental_process.returnFuelLevel }}</td>
+                <td>{{ rental_process.returnKilometers }}</td>
+                <td>{{ rental_process.status }}</td>
+                <td>{{ rental_process.pickupTime ? rental_process.pickupTime|date('H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_rental_process_show', {'id': rental_process.id}) }}">show</a>
+                    <a href="{{ path('app_rental_process_edit', {'id': rental_process.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_rental_process_new') }}">Create new</a>
+{% endblock %}

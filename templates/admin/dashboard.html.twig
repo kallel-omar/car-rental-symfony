@@ -6,32 +6,6 @@
 
 <style>
 
-.custom-table th,
-.custom-table td {
-    padding: 18px 22px !important;
-    vertical-align: middle;
-}
-
-.custom-table thead th {
-    white-space: nowrap;
-}
-
-.custom-table tbody tr:hover {
-    background-color: #f8f9fa;
-    transition: 0.2s;
-}
-
-.dashboard-card {
-    border: none;
-    border-radius: 18px;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.06);
-    transition: 0.3s;
-}
-
-.dashboard-card:hover {
-    transform: translateY(-4px);
-}
-
 .stat-icon {
     width: 65px;
     height: 65px;
@@ -53,17 +27,6 @@
 
 .bg-revenue {
     background: #111827;
-}
-
-.stat-number {
-    font-size: 2rem;
-    font-weight: 800;
-}
-
-.quick-btn {
-    border-radius: 50px;
-    padding: 12px 24px;
-    font-weight: 600;
 }
 
 .chart-container {
@@ -101,7 +64,7 @@
                         <div>
 
                             <div class="text-muted fw-semibold mb-2">
-                                Total Cars
+                                Total  Cars
                             </div>
 
                             <div class="stat-number">
@@ -126,29 +89,32 @@
 
             <div class="card dashboard-card">
 
-                <div class="card-body p-4">
+               <a href="{{ path('app_reservation_calendar') }}"
+                  class="card dashboard-card text-decoration-none text-dark">
 
-                    <div class="d-flex justify-content-between align-items-center">
+                   <div class="card-body p-4">
 
-                        <div>
+                       <div class="d-flex justify-content-between align-items-center">
 
-                            <div class="text-muted fw-semibold mb-2">
-                                Reservations
-                            </div>
+                           <div>
+                               <div class="text-muted fw-semibold mb-2">
+                                   Reservations Calender
+                               </div>
 
-                            <div class="stat-number">
-                                {{ reservationsCount }}
-                            </div>
+                               <div class="stat-number">
+                                   {{ reservationsCount }}
+                               </div>
+                           </div>
 
-                        </div>
+                           <div class="stat-icon bg-reservations">
+                               📅
+                           </div>
 
-                        <div class="stat-icon bg-reservations">
-                            📅
-                        </div>
+                       </div>
 
-                    </div>
+                   </div>
 
-                </div>
+               </a>
 
             </div>
 
@@ -213,7 +179,7 @@
 
                 <table class="table table-hover align-middle mb-0 custom-table">
 
-                    <thead class="table-dark">
+                    <thead class="table-color">
 
                         <tr>
 

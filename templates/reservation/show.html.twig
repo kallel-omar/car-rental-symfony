@@ -4,87 +4,10 @@
 
 {% block body %}
 
-<style>
 
-.details-card {
-    border: none;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 8px 28px rgba(0,0,0,0.06);
-}
-
-.details-table th,
-.details-table td {
-    padding: 18px 22px !important;
-    vertical-align: middle;
-}
-
-.details-table th {
-    width: 35%;
-    background: #f8f9fa;
-    font-weight: 700;
-    color: #111827;
-}
-
-.details-table td {
-    font-weight: 500;
-}
-
-.image-box {
-    background: white;
-    border-radius: 22px;
-    padding: 22px;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.05);
-    height: 100%;
-}
-
-.image-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 18px;
-    color: #111827;
-}
-
-.document-image {
-    width: 100%;
-    border-radius: 18px;
-    border: 1px solid #e9ecef;
-    transition: 0.3s;
-}
-
-.document-image:hover {
-    transform: scale(1.01);
-}
-
-.status-badge {
-    padding: 9px 16px;
-    border-radius: 50px;
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.action-btn {
-    border-radius: 50px;
-    padding: 12px 22px;
-    font-weight: 600;
-}
-
-.info-title {
-    font-size: 1.4rem;
-    font-weight: 700;
-    margin-bottom: 0;
-}
-
-.section-subtitle {
-    color: #6b7280;
-    margin-top: 6px;
-}
-
-</style>
 
 <div class="container py-5">
 
-    {# HEADER #}
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <div>
@@ -115,7 +38,6 @@
 
             <div class="row g-4">
 
-                {# LEFT SIDE #}
                 <div class="col-lg-6">
 
                     <div class="mb-4">
@@ -153,6 +75,47 @@
                                     {{ reservation.user.email }}
                                 </td>
                             </tr>
+                         <tr>
+
+                                                        <th>License Check</th>
+
+                                                        <td>
+
+                                                            {% if reservation.user.licenseIssueDate %}
+
+                                                                {% set difference = date().diff(reservation.user.licenseIssueDate) %}
+
+                                                                {% if difference.y >= 2 %}
+
+                                                                    <span class="badge bg-success status-badge">
+
+                                                                        ✅ Valid
+
+                                                                    </span>
+
+                                                                {% else %}
+
+                                                                    <span class="badge bg-danger status-badge">
+
+                                                                        ❌ Invalid
+
+                                                                    </span>
+
+                                                                {% endif %}
+
+                                                            {% else %}
+
+                                                                <span class="badge bg-secondary status-badge">
+
+                                                                    N/A
+
+                                                                </span>
+
+                                                            {% endif %}
+
+                                                        </td>
+
+                                                    </tr>
 
                             <tr>
 
@@ -203,7 +166,6 @@
 
                             </tr>
 
-                            {# PAYMENT #}
                             <tr>
 
                                 <th>Payment</th>
@@ -232,53 +194,11 @@
 
                             </tr>
 
-                            {# LICENSE CHECK #}
+
+
                             <tr>
 
-                                <th>License Check</th>
-
-                                <td>
-
-                                    {% if reservation.user.licenseIssueDate %}
-
-                                        {% set difference = date().diff(reservation.user.licenseIssueDate) %}
-
-                                        {% if difference.y >= 2 %}
-
-                                            <span class="badge bg-success status-badge">
-
-                                                ✅ Valid
-
-                                            </span>
-
-                                        {% else %}
-
-                                            <span class="badge bg-danger status-badge">
-
-                                                ❌ Invalid
-
-                                            </span>
-
-                                        {% endif %}
-
-                                    {% else %}
-
-                                        <span class="badge bg-secondary status-badge">
-
-                                            N/A
-
-                                        </span>
-
-                                    {% endif %}
-
-                                </td>
-
-                            </tr>
-
-                            {# STATUS #}
-                            <tr>
-
-                                <th>Status</th>
+                                <th>Reservation Status</th>
 
                                 <td>
 
@@ -319,14 +239,63 @@
                                 </td>
 
                             </tr>
+                         <tr>
+
+                                                       <th>Car Status</th>
+
+                                                       <td>
+
+                                                           {% if reservation.rentalProcesses|length > 0 %}
+
+                                                               {% set process = reservation.rentalProcesses.first %}
+
+                                                               {% if process.status == 'waiting_pickup' %}
+
+                                                                   <span class="badge bg-warning text-dark status-badge">
+
+                                                                       Waiting For Pickup
+
+                                                                   </span>
+
+                                                               {% elseif process.status == 'picked_up' %}
+
+                                                                   <span class="badge background:#f59e0b;color:white;status-badge">
+
+                                                                       Picked Up
+
+                                                                   </span>
+
+                                                               {% elseif process.status == 'completed' %}
+
+                                                                   <span class="badge bg-success status-badge">
+
+                                                                       Returned
+
+                                                                   </span>
+
+                                                               {% endif %}
+
+                                                           {% else %}
+
+                                                               <span class="badge bg-secondary status-badge">
+
+                                                                   No Process
+
+                                                               </span>
+
+                                                           {% endif %}
+
+                                                       </td>
+
+                                                       </tr>
 
                         </tbody>
 
                     </table>
 
-                    {# ACTION BUTTONS #}
                     <div class="d-flex gap-3 mt-4 flex-wrap">
 
+                        {# PENDING #}
                         {% if reservation.status == 'pending' %}
 
                             <form
@@ -355,12 +324,16 @@
 
                         {% endif %}
 
+                        {# APPROVED BUT NOT PAID #}
                         {% if reservation.status == 'approved'
                             and reservation.paymentStatus == 'unpaid' %}
 
                             <form
                                 method="post"
-                                action="{{ path('app_reservation_confirm_payment', {'id': reservation.id}) }}">
+                                action="{{ path(
+                                    'app_reservation_confirm_payment',
+                                    {'id': reservation.id}
+                                ) }}">
 
                                 <button class="btn btn-warning text-dark action-btn">
 
@@ -372,20 +345,52 @@
 
                         {% endif %}
 
+                        {# AFTER PAYMENT #}
                         {% if reservation.status == 'approved'
-                            and reservation.paymentStatus == 'paid' %}
+                            and reservation.paymentStatus == 'paid'
+                            and reservation.rentalProcesses|length > 0 %}
 
-                            <form
-                                method="post"
-                                action="{{ path('app_reservation_complete', {'id': reservation.id}) }}">
+                         {% set process = reservation.rentalProcesses.first %}
 
-                                <button class="btn btn-primary action-btn">
+                            {% if process.status == 'waiting_pickup' %}
 
-                                    🏁 Complete Reservation
+                                <a
+                                    href="{{ path(
+                                        'app_rental_process_edit',
+                                        {
+                                            id: process.id
+                                        }
+                                    ) }}"
+                                    class="btn btn-primary action-btn">
 
-                                </button>
+                                    🚗 Prepare Pickup
 
-                            </form>
+                                </a>
+
+                            {% elseif process.status == 'picked_up' %}
+
+                                <a
+                                    href="{{ path(
+                                        'app_rental_process_return_edit',
+                                        {
+                                            id: process.id
+                                        }
+                                    ) }}"
+                                    class="btn btn-success action-btn">
+
+                                    ↩️ Return Car
+
+                                </a>
+
+                            {% elseif process.status == 'completed' %}
+
+                                <span class="badge bg-primary status-badge">
+
+                                    ✅ Rental Completed
+
+                                </span>
+
+                            {% endif %}
 
                         {% endif %}
 
@@ -393,12 +398,10 @@
 
                 </div>
 
-                {# RIGHT SIDE #}
                 <div class="col-lg-6">
 
                     <div class="row g-4">
 
-                        {# LICENSE IMAGE #}
                         <div class="col-12">
 
                             <div class="image-box">
@@ -429,7 +432,6 @@
 
                         </div>
 
-                        {# CIN IMAGE #}
                         <div class="col-12">
 
                             <div class="image-box">

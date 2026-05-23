@@ -1,0 +1,49 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Prepare Pickup{% endblock %}
+
+{% block body %}
+
+
+
+<div class="pickup-page">
+
+    <div class="page-header">
+
+        <div>
+
+            <h1 class="page-title">
+
+                Prepare Pickup
+
+            </h1>
+
+            <p class="page-subtitle mb-0">
+
+                Prepare vehicle delivery information
+
+            </p>
+
+        </div>
+
+        <a
+            href="{{ app.request.headers.get('referer') }}"
+            class="btn btn-outline-dark back-btn">
+
+            ← Back
+
+        </a>
+
+    </div>
+
+    <div class="pickup-card">
+
+        {{ include(
+            'rental_process/_pickup_form.html.twig'
+        ) }}
+
+    </div>
+
+</div>
+
+{% endblock %}

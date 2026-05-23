@@ -1,103 +1,4 @@
-<style>
 
-.clean-footer {
-    background: #f8f9fa;
-    padding-top: 80px;
-    padding-bottom: 30px;
-    margin-top: 90px;
-    border-top: 1px solid rgba(0,0,0,0.06);
-}
-
-.footer-brand {
-    font-size: 2rem;
-    font-weight: 800;
-    color: #111;
-    text-decoration: none;
-    display: inline-block;
-    margin-bottom: 18px;
-}
-
-.footer-brand span {
-    color: #198754;
-}
-
-.footer-description {
-    color: #6c757d;
-    line-height: 1.9;
-    font-size: 15px;
-}
-
-.footer-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #111;
-    margin-bottom: 24px;
-}
-
-.footer-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.footer-links li {
-    margin-bottom: 14px;
-}
-
-.footer-links a {
-    color: #6c757d;
-    text-decoration: none;
-    transition: 0.2s ease;
-    font-weight: 500;
-}
-
-.footer-links a:hover {
-    color: #198754;
-    padding-left: 4px;
-}
-
-.footer-socials {
-    display: flex;
-    gap: 14px;
-    margin-top: 24px;
-}
-
-.footer-socials a {
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    background: white;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #198754;
-    text-decoration: none;
-    transition: 0.25s ease;
-}
-
-.footer-socials a:hover {
-    background: #198754;
-    color: white;
-    transform: translateY(-3px);
-}
-
-.footer-contact {
-    color: #6c757d;
-    line-height: 2;
-    font-weight: 500;
-}
-
-.footer-bottom {
-    margin-top: 60px;
-    padding-top: 25px;
-    border-top: 1px solid rgba(0,0,0,0.06);
-    text-align: center;
-    color: #6c757d;
-    font-size: 14px;
-}
-
-</style>
 
 <footer class="clean-footer">
 
@@ -181,21 +82,27 @@
 
                 <ul class="footer-links">
 
-                    {% if app.user %}
+                  {% if app.user %}
 
-                        <li>
-                            <a href="{{ path('app_my_reservations') }}">
-                                My Reservations
-                            </a>
-                        </li>
+                      <li>
+                          <a href="{{ path('app_user_profile') }}">
+                              My Profile
+                          </a>
+                      </li>
 
-                        <li>
-                            <a href="{{ path('app_logout') }}">
-                                Logout
-                            </a>
-                        </li>
+                      <li>
+                          <a href="{{ path('app_my_reservations') }}">
+                              My Reservations
+                          </a>
+                      </li>
 
-                    {% else %}
+                      <li>
+                          <a href="{{ path('app_logout') }}">
+                              Logout
+                          </a>
+                      </li>
+
+                  {% else %}
 
                         <li>
                             <a href="{{ path('app_login') }}">
@@ -224,8 +131,10 @@
                 <div class="footer-contact">
 
                     <div>
-                        📍 Tunisia
+                        📍 Hammamet, Tunisia
                     </div>
+
+
 
                     <div>
                         📞 +216 00 000 000

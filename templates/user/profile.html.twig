@@ -4,205 +4,11 @@
 
 {% block body %}
 
-<style>
-
-.profile-hero{
-    background: linear-gradient(135deg,#111827,#1f2937);
-    padding:140px 0;
-    border-radius:0 0 40px 40px;
-}
-
-.profile-title{
-    color:white;
-    font-size:3rem;
-    font-weight:800;
-}
-
-.profile-subtitle{
-    color:rgba(255,255,255,0.75);
-}
-
-.profile-wrapper{
-    margin-top:40px;
-}
-
-.profile-card{
-    background:white;
-    border-radius:32px;
-    padding:40px;
-    box-shadow:0 15px 45px rgba(0,0,0,0.08);
-}
-
-.profile-avatar-2{
-    width:78px;
-    height:78px;
-    border-radius:50%;
-    background:linear-gradient(135deg,#198754,#157347);
-    color:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:28px;
-    font-weight:800;
-    flex-shrink:0;
-}
-
-.profile-name{
-    font-size:1.5rem;
-    font-weight:800;
-    color:#111827;
-}
-
-.profile-email{
-    color:#6b7280;
-    margin-top:6px;
-}
-
-.edit-profile-btn{
-    background:#111827;
-    color:white !important;
-    padding:8px 16px;
-    border-radius:50px;
-    font-size:13px;
-    font-weight:700;
-    text-decoration:none !important;
-    transition:0.25s ease;
-}
-
-.edit-profile-btn:hover{
-    background:#198754;
-}
-
-.stats-card{
-    background:linear-gradient(135deg,#198754,#157347);
-    color:white;
-    border-radius:24px;
-    padding:28px;
-    text-align:center;
-    min-width:220px;
-    transition:0.25s ease;
-}
-
-.stats-card:hover{
-    transform:translateY(-4px);
-}
-
-.stats-number{
-    font-size:2.2rem;
-    font-weight:800;
-}
-
-.stats-label{
-    opacity:0.85;
-}
-
-.info-box{
-    background:#f8f9fa;
-    border-radius:24px;
-    padding:24px;
-    height:100%;
-    border:1px solid #e9ecef;
-}
-
-.info-label{
-    color:#6b7280;
-    font-size:14px;
-    margin-bottom:6px;
-}
-
-.info-value{
-    font-weight:700;
-    color:#111827;
-    font-size:1.05rem;
-}
-
-.document-box{
-    background:#f8f9fa;
-    border-radius:18px;
-    padding:24px;
-    border:1px solid #e9ecef;
-    height:100%;
-}
-
-.document-title{
-    font-size:1.1rem;
-    font-weight:700;
-    margin-bottom:18px;
-}
-
-.document-image{
-    width:100%;
-    border-radius:18px;
-    border:1px solid #dee2e6;
-    max-height:220px;
-    object-fit:contain;
-    background:white;
-    padding:10px;
-}
-
-.profile-section-title{
-    font-size:1.4rem;
-    font-weight:800;
-    color:#111827;
-}
-
-.minimal-reservation-card{
-    background:white;
-    border:1px solid #e9ecef;
-    border-radius:24px;
-    padding:22px;
-    transition:0.25s ease;
-}
-
-.minimal-reservation-card:hover{
-    transform:translateY(-3px);
-    box-shadow:0 12px 30px rgba(0,0,0,0.06);
-}
-
-.minimal-car-image{
-    width:120px;
-    height:80px;
-    object-fit:cover;
-    border-radius:16px;
-}
-
-.border-warning{
-    border:1px solid #ffc107 !important;
-}
-
-@media(max-width:768px){
-
-    .profile-card{
-        padding:28px;
-    }
-
-    .profile-title{
-        font-size:2.2rem;
-    }
-
-    .stats-card{
-        width:100%;
-    }
-}
-
-</style>
-
 <section class="profile-hero">
 
     <div class="container">
-
-        <h1 class="profile-title">
-
-            My Profile
-
-        </h1>
-
-        <p class="profile-subtitle">
-
-            Manage your personal information and reservations
-
-        </p>
-
+        <h1 class="profile-title">My Profile</h1>
+        <p class="profile-subtitle">Manage your personal information and reservations</p>
     </div>
 
 </section>
@@ -213,51 +19,43 @@
 
         <div class="profile-card">
 
-            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-5">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-4">
 
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center ">
 
-                    <div class="profile-avatar-2 mr-4">
 
-                        {{ userData.email|first|upper }}
-
-                    </div>
 
                     <div>
 
-                        <div class="d-flex align-items-center flex-wrap mb-2">
+                   <div class="d-flex align-items-center flex-wrap profile-header-items">
+                        <div class="profile-avatar mb-4 me-4">
+                            {{ userData.email|first|upper }}
+                        </div>
+                        <span class="profile-name me-5">
+                            {{ userData.fullName ?: 'Customer Account' }}
+                        </span>
 
-                            <div class="profile-name mr-3">
+                        {% if 'ROLE_SUPERVISER' in userData.roles %}
 
-                                {{ userData.fullName ?: 'Customer Account' }}
+                            <span class="badge bg-warning text-dark me-5 px-3 py-2">
+                                Superviser
+                            </span>
 
-                            </div>
+                        {% elseif 'ROLE_ADMIN' in userData.roles %}
 
-                            {% if 'ROLE_SUPERVISER' in userData.roles %}
+                            <span class="badge bg-dark me-5 px-3 py-2">
+                                Admin
+                            </span>
 
-                                <span class="badge badge-warning mr-3">
+                        {% else %}
 
-                                    Superviser
+                            <span class="badge bg-success text-dark me-5 px-3 py-2">
+                                User
+                            </span>
 
-                                </span>
+                        {% endif %}
 
-                            {% elseif 'ROLE_ADMIN' in userData.roles %}
-
-                                <span class="badge badge-dark mr-3">
-
-                                    Admin
-
-                                </span>
-
-                            {% else %}
-
-                                <span class="badge badge-success mr-3">
-
-                                    User
-
-                                </span>
-
-                            {% endif %}
+                        <span class="ms-4">
 
                             <a href="{{ path('app_user_edit_profile') }}"
                                class="edit-profile-btn">
@@ -266,31 +64,26 @@
 
                             </a>
 
-                        </div>
+                        </span>
 
-                        <div class="profile-email">
+                    </div>
 
+                        <div class="profile-email mb-2">
                             {{ userData.email }}
-
                         </div>
-
                     </div>
 
                 </div>
 
                 <a href="{{ path('app_my_reservations') }}"
-                   class="stats-card text-decoration-none text-white mt-4 mt-lg-0">
+                   class="profile-stats-card text-decoration-none text-white mt-4 mt-lg-0">
 
                     <div class="stats-number">
-
                         {{ userData.reservations|length }}
-
                     </div>
 
                     <div class="stats-label">
-
                         Reservations →
-
                     </div>
 
                 </a>
@@ -300,82 +93,37 @@
             <div class="row">
 
                 <div class="col-lg-4 mb-4">
-
-                    <div class="info-box">
-
-                        <div class="info-label">
-
-                            Phone Number
-
-                        </div>
-
-                        <div class="info-value">
-
+                    <div class="profile-info-box">
+                        <div class="profile-info-label">Phone Number</div>
+                        <div class="profile-info-value">
                             {{ userData.phoneNumber ?: 'Not provided' }}
-
                         </div>
-
                     </div>
-
                 </div>
 
                 <div class="col-lg-4 mb-4">
-
-                    <div class="info-box">
-
-                        <div class="info-label">
-
-                            Driver License Date
-
-                        </div>
-
-                        <div class="info-value">
-
+                    <div class="profile-info-box">
+                        <div class="profile-info-label">Driver License Date</div>
+                        <div class="profile-info-value">
                             {{ userData.licenseIssueDate
                                 ? userData.licenseIssueDate|date('d M Y')
                                 : 'Not provided'
                             }}
-
                         </div>
-
                     </div>
-
                 </div>
 
                 <div class="col-lg-4 mb-4">
-
-                    <div class="info-box">
-
-                        <div class="info-label">
-
-                            Account Verification
-
-                        </div>
-
-                        <div class="info-value">
-
+                    <div class="profile-info-box">
+                        <div class="profile-info-label">Account Verification</div>
+                        <div class="profile-info-value">
                             {% if userData.isVerified %}
-
-                                <span class="text-success">
-
-                                    ✅ Verified
-
-                                </span>
-
+                                <span class="text-success">✅ Verified</span>
                             {% else %}
-
-                                <span class="text-danger">
-
-                                    ❌ Not Verified
-
-                                </span>
-
+                                <span class="text-danger">❌ Not Verified</span>
                             {% endif %}
-
                         </div>
-
                     </div>
-
                 </div>
 
             </div>
@@ -383,65 +131,43 @@
             <div class="row mt-3">
 
                 <div class="col-lg-6 mb-4">
+                    <div class="profile-document-box">
 
-                    <div class="document-box">
-
-                        <div class="document-title">
-
+                        <div class="profile-document-title">
                             CIN Document
-
                         </div>
 
                         {% if userData.cinImage %}
-
                             <img
                                 src="{{ asset('uploads/cin/' ~ userData.cinImage) }}"
-                                class="document-image"
-                            >
-
+                                class="profile-document-image">
                         {% else %}
-
                             <div class="alert alert-secondary rounded-4 mb-0">
-
                                 No CIN uploaded
-
                             </div>
-
                         {% endif %}
 
                     </div>
-
                 </div>
 
                 <div class="col-lg-6 mb-4">
+                    <div class="profile-document-box">
 
-                    <div class="document-box">
-
-                        <div class="document-title">
-
+                        <div class="profile-document-title">
                             Driver License
-
                         </div>
 
                         {% if userData.licenseImage %}
-
                             <img
                                 src="{{ asset('uploads/licenses/' ~ userData.licenseImage) }}"
-                                class="document-image"
-                            >
-
+                                class="profile-document-image">
                         {% else %}
-
                             <div class="alert alert-secondary rounded-4 mb-0">
-
                                 No license uploaded
-
                             </div>
-
                         {% endif %}
 
                     </div>
-
                 </div>
 
             </div>
@@ -450,66 +176,45 @@
 
                 <div class="mt-5">
 
-                    <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="profile-section-title mb-4">
+                        Current Reservation
+                    </h4>
 
-                        <h4 class="profile-section-title mb-0">
-
-                            Current Reservation
-
-                        </h4>
-
-                    </div>
-
-                    <div class="minimal-reservation-card">
+                    <div class="profile-reservation-card">
 
                         <div class="d-flex align-items-center">
 
                             {% if latestReservation.car.image %}
-
                                 <img
                                     src="{{ asset('uploads/cars/' ~ latestReservation.car.image) }}"
-                                    class="minimal-car-image"
-                                >
-
+                                    class="profile-reservation-image">
                             {% endif %}
 
-                            <div class="ml-4 flex-grow-1">
+                            <div class="ms-4 flex-grow-1">
 
                                 <div class="d-flex justify-content-between flex-wrap">
 
                                     <div>
-
                                         <h5 class="fw-bold mb-1">
-
                                             {{ latestReservation.car.brand }}
                                             {{ latestReservation.car.model }}
-
                                         </h5>
 
                                         <div class="text-muted small">
-
                                             {{ latestReservation.startDate|date('d M Y') }}
                                             —
                                             {{ latestReservation.endDate|date('d M Y') }}
-
                                         </div>
-
                                     </div>
 
-                                    <div class="text-right">
-
+                                    <div class="text-end">
                                         <div class="fw-bold text-success">
-
                                             {{ latestReservation.totalPrice }} €
-
                                         </div>
 
-                                        <span class="badge badge-success px-3 py-2 mt-1">
-
+                                        <span class="badge bg-success text-dark px-3 py-2 mt-1">
                                             Paid
-
                                         </span>
-
                                     </div>
 
                                 </div>
@@ -528,66 +233,45 @@
 
                 <div class="mt-4">
 
-                    <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="profile-section-title mb-4">
+                        Awaiting Payment
+                    </h4>
 
-                        <h4 class="profile-section-title mb-0">
-
-                            Awaiting Payment
-
-                        </h4>
-
-                    </div>
-
-                    <div class="minimal-reservation-card border-warning">
+                    <div class="profile-reservation-card border-warning">
 
                         <div class="d-flex align-items-center">
 
                             {% if pendingPaymentReservation.car.image %}
-
                                 <img
                                     src="{{ asset('uploads/cars/' ~ pendingPaymentReservation.car.image) }}"
-                                    class="minimal-car-image"
-                                >
-
+                                    class="profile-reservation-image">
                             {% endif %}
 
-                            <div class="ml-4 flex-grow-1">
+                            <div class="ms-4 flex-grow-1">
 
                                 <div class="d-flex justify-content-between flex-wrap">
 
                                     <div>
-
                                         <h5 class="fw-bold mb-1">
-
                                             {{ pendingPaymentReservation.car.brand }}
                                             {{ pendingPaymentReservation.car.model }}
-
                                         </h5>
 
                                         <div class="text-muted small">
-
                                             {{ pendingPaymentReservation.startDate|date('d M Y') }}
                                             —
                                             {{ pendingPaymentReservation.endDate|date('d M Y') }}
-
                                         </div>
-
                                     </div>
 
-                                    <div class="text-right">
-
+                                    <div class="text-end">
                                         <div class="fw-bold text-warning">
-
                                             {{ pendingPaymentReservation.totalPrice }} €
-
                                         </div>
 
-                                        <span class="badge badge-warning px-3 py-2 mt-1">
-
+                                        <span class="badge bg-warning text-dark px-3 py-2 mt-1">
                                             Unpaid
-
                                         </span>
-
                                     </div>
 
                                 </div>

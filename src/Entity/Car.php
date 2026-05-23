@@ -56,9 +56,16 @@ class Car
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'car')]
     private Collection $reservations;
 
+    /**
+     * @var Collection<int, RentalProcess>
+     */
+    #[ORM\OneToMany(targetEntity: RentalProcess::class, mappedBy: 'car')]
+    private Collection $rentalProcesses;
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
+        $this->rentalProcesses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -234,5 +241,35 @@ class Car
     public function __toString(): string
     {
         return $this->getBrand() . ' ' . $this->getModel();
+    }
+
+    /**
+     * @return Collection<int, RentalProcess>
+     */
+    public function getRentalProcesses(): Collection
+    {
+        return $this->rentalProcesses;
+    }
+
+    public function addRentalProcess(RentalProcess $rentalProcess): static
+    {
+        if (!$this->rentalProcesses->contains($rentalProcess)) {
+            $this->rentalProcesses->add($rentalProcess);
+            $rentalProcess->setCar($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRentalProcess(RentalProcess $rentalProcess): static
+    {
+        if ($this->rentalProcesses->removeElement($rentalProcess)) {
+            // set the owning side to null (unless already changed)
+            if ($rentalProcess->getCar() === $this) {
+                $rentalProcess->setCar(null);
+            }
+        }
+
+        return $this;
     }
 }

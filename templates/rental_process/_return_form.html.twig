@@ -1,0 +1,71 @@
+{{ form_start(form) }}
+
+
+
+<div class="modern-form">
+
+    <h2 class="section-title">Pickup Information</h2>
+
+    <div class="row">
+
+        <div class="col-lg-6">
+                    <div class="info-card">
+                        <div class="info-label">Pickup Fuel Level</div>
+                        <div class="info-value">
+                            {{ rental_process.pickupFuelLevel }}
+                        </div>
+                    </div>
+                </div>
+
+        <div class="col-lg-6">
+            <div class="info-card">
+                <div class="info-label">Pickup Kilometers</div>
+                <div class="info-value">
+                    {{ rental_process.pickupKilometers }} km
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <h2 class="section-title mt-4">Vehicle Return Inspection</h2>
+
+    <div class="row">
+
+        <div class="col-lg-6">
+            <div class="form-group-modern">
+                {{ form_label(form.returnFuelLevel) }}
+                {{ form_widget(form.returnFuelLevel, {
+                    attr: {
+                        class: 'form-select'
+                    }
+                }) }}
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="form-group-modern">
+                {{ form_label(form.returnKilometers) }}
+                {{ form_widget(form.returnKilometers, {
+                    attr: {
+                        class: 'form-control',
+                        placeholder: 'Example: 45890'
+                    }
+                }) }}
+            </div>
+        </div>
+
+    </div>
+
+    <div class="d-flex justify-content-end mt-4">
+        <button type="submit" class="return-btn">
+            Complete Return
+        </button>
+    </div>
+
+</div>
+
+{{ form_row(form._token) }}
+{{ form_end(form, {'render_rest': false}) }}

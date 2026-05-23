@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ReservationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -43,6 +45,17 @@ class Reservation
 
     #[ORM\Column]
     private ?float $totalPrice = null;
+
+    /**
+     * @var Collection<int, RentalProcess>
+     */
+    #[ORM\OneToMany(targetEntity: RentalProcess::class, mappedBy: 'reservation')]
+    private Collection $rentalProcesses;
+
+    public function __construct()
+    {
+        $this->rentalProcesses = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -153,6 +166,36 @@ class Reservation
     public function setTotalPrice(float $totalPrice): static
     {
         $this->totalPrice = $totalPrice;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RentalProcess>
+     */
+    public function getRentalProcesses(): Collection
+    {
+        return $this->rentalProcesses;
+    }
+
+    public function addRentalProcess(RentalProcess $rentalProcess): static
+    {
+        if (!$this->rentalProcesses->contains($rentalProcess)) {
+            $this->rentalProcesses->add($rentalProcess);
+            $rentalProcess->setReservation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRentalProcess(RentalProcess $rentalProcess): static
+    {
+        if ($this->rentalProcesses->removeElement($rentalProcess)) {
+            // set the owning side to null (unless already changed)
+            if ($rentalProcess->getReservation() === $this) {
+                $rentalProcess->setReservation(null);
+            }
+        }
 
         return $this;
     }

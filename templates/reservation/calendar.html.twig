@@ -4,12 +4,14 @@
 
 {% block body %}
 
-<div class="container py-4">
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css"
+      rel="stylesheet">
+
+<div class="container py-5">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <div>
-
             <h1 class="fw-bold mb-1">
                 Reservation Calendar
             </h1>
@@ -17,19 +19,16 @@
             <p class="text-muted mb-0">
                 View all reservations visually
             </p>
-
         </div>
 
-        <a href="{{ path('app_reservation_index') }}"
-           class="btn btn-outline-secondary">
-
-            ← Back to Reservations
-
+        <a href="{{ path('admin_dashboard')  }}"
+           class="btn btn-dark rounded-pill px-4">
+            ← Back
         </a>
 
     </div>
 
-    <div class="card border-0 shadow-sm">
+    <div class="card border-0 shadow-sm calendar-card">
 
         <div class="card-body p-4">
 
@@ -38,52 +37,98 @@
         </div>
 
     </div>
+<div class="card border-0 shadow-sm mb-4">
+
+    <div class="card-body p-3">
+
+        <div class="d-flex gap-4 flex-wrap align-items-center">
+
+            <div class="d-flex align-items-center gap-2">
+
+                <div
+                    style="
+                        width:16px;
+                        height:16px;
+                        border-radius:50%;
+                        background:#6b7280;
+                    ">
+                </div>
+
+                <small class="fw-semibold">
+                    Pending Approval
+                </small>
+
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+
+                <div
+                    style="
+                        width:16px;
+                        height:16px;
+                        border-radius:50%;
+                        background:#f59e0b;
+                    ">
+                </div>
+
+                <small class="fw-semibold">
+                    Waiting Pickup
+                </small>
+
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+
+                <div
+                    style="
+                        width:16px;
+                        height:16px;
+                        border-radius:50%;
+                        background:#198754;
+                    ">
+                </div>
+
+                <small class="fw-semibold">
+                    Picked Up
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
-{# FULLCALENDAR CSS #}
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css"
-      rel="stylesheet">
+</div>
 
-{# FULLCALENDAR JS #}
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
 
 <script>
-
 document.addEventListener('DOMContentLoaded', function () {
-
     let calendarEl = document.getElementById('calendar');
 
     let calendar = new FullCalendar.Calendar(calendarEl, {
-
         initialView: 'dayGridMonth',
-
-        height: 750,
-
+        height: 720,
         events: {{ events|raw }},
-
         headerToolbar: {
-
             left: 'prev,next today',
-
             center: 'title',
-
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
-
         },
-
-        eventTimeFormat: {
-            hour: '2-digit',
-            minute: '2-digit',
-            meridiem: false
+        buttonText: {
+            today: 'Today',
+            month: 'Month',
+            week: 'Week',
+            day: 'Day'
         }
-
     });
 
     calendar.render();
-
 });
-
 </script>
 
 {% endblock %}

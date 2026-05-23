@@ -13,6 +13,7 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
 
+
 #[Route('/admin')]
 #[IsGranted('ROLE_ADMIN')]
 class AdminController extends AbstractController
@@ -46,19 +47,59 @@ class AdminController extends AbstractController
     // CARS MANAGEMENT PAGE
 
     #[Route('/cars', name: 'admin_cars')]
-    public function cars(CarRepository $carRepository, Request $request): Response
-    {
-        $status = $request->query->get('status');
+    public function cars(
+        CarRepository $carRepository,
+        Request $request
+    ): Response {
 
-        if ($status) {
-            $cars = $carRepository->findBy(['status' => $status]);
-        } else {
-            $cars = $carRepository->findAll();
+        $status = $request->query->get('status');
+        $search = $request->query->get('search');
+
+        $qb = $carRepository->createQueryBuilder('c')
+            ->leftJoin('c.rentalProcesses', 'rp')
+            ->leftJoin('c.reservations', 'r');
+
+        if ($status === 'rented') {
+
+            $qb->andWhere('rp.status = :pickedUp')
+                ->setParameter('pickedUp', 'picked_up');
+
+        } elseif ($status === 'booked') {
+
+            $qb->andWhere('r.status = :approved')
+                ->andWhere('rp.id IS NULL OR rp.status != :pickedUp')
+                ->setParameter('approved', 'approved')
+                ->setParameter('pickedUp', 'picked_up');
+
+        } elseif ($status) {
+
+            $qb->andWhere('c.status = :status')
+                ->setParameter('status', $status);
+
         }
+
+        if ($search) {
+
+            $qb->andWhere(
+                'c.brand LIKE :search
+             OR c.model LIKE :search
+             OR c.year LIKE :search
+                OR c.registrationNumber LIKE :search
+                OR c.pricePerDay LIKE :search'
+            )
+                ->setParameter('search', '%' . $search . '%');
+
+        }
+
+        $cars = $qb
+            ->orderBy('c.id', 'DESC')
+            ->getQuery()
+            ->getResult();
 
         return $this->render('admin/cars.html.twig', [
             'cars' => $cars,
             'currentStatus' => $status,
+            'search' => $search,
         ]);
     }
     #[Route('/admin/user/{id}/block', name: 'app_admin_block_user')]

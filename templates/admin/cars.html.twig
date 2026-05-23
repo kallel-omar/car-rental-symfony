@@ -1,111 +1,109 @@
-
 {% extends 'admin/layout.html.twig' %}
 
 {% block title %}Cars{% endblock %}
 
 {% block body %}
 
-<style>
-
-.custom-table th,
-.custom-table td {
-    padding: 20px 25px !important;
-    vertical-align: middle;
-}
-
-.custom-table thead th {
-    white-space: nowrap;
-}
-
-.custom-table tbody tr:hover {
-    background-color: #f8f9fa;
-    transition: 0.2s;
-}
-
-.car-image {
-    width: 90px;
-    height: 70px;
-    object-fit: cover;
-    border-radius: 12px;
-}
-
-.status-badge {
-    padding: 8px 15px;
-    border-radius: 50px;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.available {
-    background: #d1e7dd;
-    color: #146c43;
-}
-
-.unavailable {
-    background: #f8d7da;
-    color: #842029;
-}
-
-</style>
-
 <div class="container py-5">
 
-    {# HEADER #}
-    <div class="d-flex justify-content-between align-items-center mb-4">
+     {# HEADER #}
+        <div class="d-flex justify-content-between align-items-center mb-4">
 
         <div>
 
-            <h1 class="fw-bold mb-1">
+            <h1 class="fw-bold mb-2">
                 Cars
             </h1>
 
-            <p class="text-muted mb-0">
+            <p class="text-muted mb-2">
                 Manage all cars
             </p>
+        <a
+                    href="{{ path('app_car_new') }}"
+                    class="btn btn-primary shadow-sm px-4 ">
+
+                    + Add Car
+
+                </a>
 
         </div>
+    <form method="get" class="d-flex gap-2 mb-4">
 
-        <a
-            href="{{ path('app_car_new') }}"
-            class="btn btn-success shadow-sm px-4 rounded-pill">
+        {% if currentStatus %}
+            <input
+                type="hidden"
+                name="status"
+                value="{{ currentStatus }}">
+        {% endif %}
 
-            + Add Car
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            class="form-control rounded-pill px-4"
+            placeholder="Search by brand, model or year">
 
-        </a>
+        <button class="btn btn-dark rounded-pill px-4">
 
-    </div>
+            Search
 
-    {# FILTER BUTTONS #}
-    <div class="d-flex gap-2 flex-wrap mb-4">
+        </button>
 
-        <a
-            href="{{ path('admin_cars') }}"
-            class="btn btn-dark rounded-pill px-4">
+    </form>
 
-            All
 
-        </a>
-
-        <a
-            <a href="{{ path('admin_cars', {'status': 'available'}) }}"
-            class="btn btn-success rounded-pill px-4">
-
-            Available
-
-        </a>
-
-        <a
-            href="{{ path('admin_cars', {'status': 'unavailable'}) }}"
-            class="btn btn-danger rounded-pill px-4">
-
-            Unavailable
-
-        </a>
 
     </div>
 
-    {# TABLE CARD #}
+
+
+
     <div class="card border-0 shadow-sm">
+
+         <div class="d-flex gap-2 flex-wrap mb-4 p-4 pb-0">
+
+                <a
+                    href="{{ path('admin_cars') }}"
+                    class="btn btn-dark rounded-pill px-4">
+
+                    All
+
+                </a>
+
+                <a
+                    href="{{ path('admin_cars', {'status': 'rented'}) }}"
+                    class="btn rounded-pill px-4"
+                    style="background:#0ea5e9;color:white;">
+
+                    Rented
+
+                </a>
+            <a
+                href="{{ path('admin_cars', {'status': 'booked'}) }}"
+                class="btn rounded-pill px-4"
+                style="background:#f59e0b;color:white;">
+
+                Booked
+
+            </a>
+
+                <a
+                    href="{{ path('admin_cars', {'status': 'available'}) }}"
+                    class="btn btn-success rounded-pill px-4">
+
+                    Available
+
+                </a>
+
+                <a
+                    href="{{ path('admin_cars', {'status': 'unavailable'}) }}"
+                    class="btn btn-danger rounded-pill px-4">
+
+                    Unavailable
+
+                </a>
+
+            </div>
 
         <div class="card-body p-4">
 
@@ -117,12 +115,11 @@
 
                         <tr>
 
-
                             <th>Image</th>
                             <th>Car</th>
-
                             <th>Price</th>
-                            <th>Status</th>
+                            <th>Car Status</th>
+                            <th>Rental Status</th>
                             <th class="text-center">
                                 Actions
                             </th>
@@ -137,9 +134,6 @@
 
                         <tr>
 
-
-
-                            {# IMAGE #}
                             <td>
 
                                 {% if car.image %}
@@ -159,7 +153,6 @@
 
                             </td>
 
-                            {# CAR #}
                             <td>
 
                                 <div class="fw-semibold">
@@ -172,14 +165,10 @@
 
                             </td>
 
-
-
-                            {# PRICE #}
                             <td class="fw-bold text-success">
                                 {{ car.pricePerDay }} €
                             </td>
 
-                            {# STATUS #}
                             <td>
 
                                 {% if car.status == 'available' %}
@@ -201,8 +190,85 @@
                                 {% endif %}
 
                             </td>
+                        <td>
 
-                            {# ACTIONS #}
+                            {% set rentalStatus = 'garage' %}
+                            {% set activeProcess = null %}
+
+                            {% for process in car.rentalProcesses %}
+
+                                {% if process.status == 'waiting_pickup' %}
+
+                                    {% set rentalStatus = 'ready' %}
+                                    {% set activeProcess = process %}
+
+                                {% elseif process.status == 'picked_up' %}
+
+                                    {% set rentalStatus = 'rented' %}
+                                    {% set activeProcess = process %}
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                            {% if rentalStatus == 'ready' %}
+
+                                <span
+                                    class="status-badge"
+                                    style="background:#fef3c7;color:#92400e;">
+
+                                    Ready To Pickup
+
+                                </span>
+
+                                <div class="small text-dark mt-2">
+
+                                    {{ activeProcess.reservation.startDate|date('d M Y') }}
+
+                                    {% if activeProcess.pickupTime %}
+
+                                        • {{ activeProcess.pickupTime|date('H:i') }}
+
+                                    {% endif %}
+
+                                </div>
+
+                            {% elseif rentalStatus == 'rented' %}
+
+                                <span
+                                    class="status-badge"
+                                    style="background:#fee2e2;color:#991b1b;">
+
+                                    Rented
+
+                                </span>
+
+                                <div class="small text-danger mt-2">
+
+                                    Return:
+                                    {{ activeProcess.reservation.endDate|date('d M Y') }}
+                                     {% if activeProcess.pickupTime %}
+
+                                       / {{ activeProcess.pickupTime|date('H:i') }}
+                                        {% endif %}
+
+
+                                </div>
+
+                            {% else %}
+
+                                <span
+                                    class="status-badge"
+                                    style="background:#dbeafe;color:#1d4ed8;">
+
+                                    In Garage
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
                             <td class="text-center">
 
                                 <div class="d-flex gap-2 justify-content-center">
@@ -226,8 +292,7 @@
                                     <form
                                         method="post"
                                         action="{{ path('app_car_delete', {'id': car.id}) }}"
-                                        onsubmit="return confirm('Are you sure you want to delete this car?');"
-                                    >
+                                        onsubmit="return confirm('Are you sure you want to delete this car?');">
 
                                         <input
                                             type="hidden"
@@ -253,7 +318,8 @@
 
                         <tr>
 
-                            <td colspan="9"
+                            <td
+                                colspan="5"
                                 class="text-center py-5 text-muted">
 
                                 <h5>
