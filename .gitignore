@@ -21,3 +21,27 @@ yarn-error.log
 /phpunit.xml
 /.phpunit.cache/
 ###< phpunit/phpunit ###
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Composer
+composer.lock
+
+# Environment
+.env.backup
+.env.test
+
+# OS
+Thumbs.db
+
+# Logs
+*.log
+
+# Temp files
+*.tmp
