@@ -28,6 +28,24 @@ This Car Rental Management System is built with **Symfony** and provides a compl
 - **Responsive Design**: Mobile-friendly interface
 - **User Authentication**: Secure login and access control
 
+## 📸 Screenshots
+
+### Dashboard
+![Dashboard](docs/screenshots/dashboard.png)
+*Admin dashboard overview with key metrics and quick actions*
+
+### Vehicle Management
+![Vehicle Management](docs/screenshots/vehicles.png)
+*Fleet management interface for vehicle inventory*
+
+### Reservation System
+![Reservation System](docs/screenshots/reservations.png)
+*Booking and reservation management interface*
+
+### Customer Management
+![Customer Management](docs/screenshots/customers.png)
+*Customer database and rental history tracking*
+
 ## 📦 Requirements
 
 - PHP 8.0 or higher
