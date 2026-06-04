@@ -18,13 +18,6 @@ This Car Rental Management System is built with **Symfony** and provides a compl
 - **Templating**: Twig
 - **Database**: MySQL/MariaDB (recommended)
 
-### Language Composition
-- HTML: 51.1%
-- CSS: 19.8%
-- SCSS: 12.1%
-- PHP: 8.8%
-- Twig: 6.9%
-- JavaScript: 1.3%
 
 ## ✨ Features
 
