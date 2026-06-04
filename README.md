@@ -30,21 +30,21 @@ This Car Rental Management System is built with **Symfony** and provides a compl
 
 ## 📸 Screenshots
 
-### Dashboard
-![Dashboard](docs/screenshots/dashboard.png)
-*Admin dashboard overview with key metrics and quick actions*
+### Users Management
+![Users Management](docs/screenshots/users-management.png)
+*Comprehensive user management interface with role assignment and account status control*
 
-### Vehicle Management
-![Vehicle Management](docs/screenshots/vehicles.png)
-*Fleet management interface for vehicle inventory*
+### Dashboard Analytics
+![Dashboard Analytics](docs/screenshots/dashboard.png)
+*Admin dashboard displaying key metrics including total cars, reservations calendar, revenue tracking, and latest reservation activities*
+
+### User Profile
+![User Profile](docs/screenshots/profile.png)
+*Personal profile page with reservation history, document verification, and account information management*
 
 ### Reservation System
-![Reservation System](docs/screenshots/reservations.png)
-*Booking and reservation management interface*
-
-### Customer Management
-![Customer Management](docs/screenshots/customers.png)
-*Customer database and rental history tracking*
+![Reservation System](docs/screenshots/reservation.png)
+*Intuitive car reservation form with vehicle selection, date picker, and document upload for CIN and driver license*
 
 ## 📦 Requirements
 
@@ -128,12 +128,14 @@ Configure MAILER_DSN in `.env` for sending notifications
 - Access the admin panel to manage vehicles, customers, and bookings
 - Monitor rental history and generate reports
 - Configure system settings
+- Manage user roles and permissions
 
 ### For Customers
 - Register and create an account
 - Browse available vehicles
 - Make and manage reservations
-- View rental history
+- Upload required documents (CIN, Driver License)
+- View rental history and profile information
 
 ## 📝 License
 
