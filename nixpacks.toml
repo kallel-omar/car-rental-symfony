@@ -1,0 +1,18 @@
+[providers]
+# Explicitly use PHP/Composer provider so Nixpacks does not default to Node
+# when it finds package.json alongside composer.json.
+providers = ["php"]
+
+[phases.install]
+cmds = ["composer install --no-dev --optimize-autoloader --no-interaction"]
+
+[phases.build]
+cmds = [
+    "npm ci",
+    "npm run build",
+    "php bin/console cache:clear --env=prod --no-debug",
+    "php bin/console assets:install public --env=prod --no-debug"
+]
+
+[start]
+cmd = "php -S 0.0.0.0:$PORT -t public"
