@@ -11,7 +11,7 @@ WORKDIR /var/www/html
 COPY . .
 
 RUN touch .env \
-    && composer install --no-interaction --optimize-autoloader \
+    && composer install --no-interaction --optimize-autoloader --no-scripts \
     && composer dump-autoload --optimize \
     && npm install \
     && npm run build
