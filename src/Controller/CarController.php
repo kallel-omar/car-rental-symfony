@@ -235,7 +235,7 @@ final class CarController extends AbstractController
             );
 
             return $this->redirectToRoute(
-                'app_car_index'
+                'admin_cars'
             );
         }
 
