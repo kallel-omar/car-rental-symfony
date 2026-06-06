@@ -1,2 +1,2 @@
 [phases.setup]
-nixPkgs = ["...", "php85Extensions.pdo_mysql"]
+nixPkgs = ["php85", "php85Extensions.pdo_mysql"]
