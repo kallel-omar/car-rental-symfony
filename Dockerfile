@@ -16,11 +16,9 @@ RUN touch .env \
     && npm install \
     && npm run build
 
-RUN rm -f /etc/apache2/mods-enabled/mpm_event.load \
-    /etc/apache2/mods-enabled/mpm_event.conf \
-    /etc/apache2/mods-enabled/mpm_worker.load \
-    /etc/apache2/mods-enabled/mpm_worker.conf \
-    && a2enmod mpm_prefork rewrite \
-    && sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
+RUN ls -la /etc/apache2/mods-enabled/ \
+    && a2query -m mpm_event || true \
+    && a2query -m mpm_worker || true \
+    && a2query -m mpm_prefork || true
 
 EXPOSE 80
